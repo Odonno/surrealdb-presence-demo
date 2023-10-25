@@ -1,0 +1,1 @@
+CREATE join_room SET room_id = $room_id;

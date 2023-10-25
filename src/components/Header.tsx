@@ -3,13 +3,13 @@ import SignInPopover from "@/components/SignInPopover";
 import SignUpDialog from "@/components/SignUpDialog";
 import { Button } from "@/components/ui/button";
 import { ACCESS_TOKEN } from "@/constants/storage";
-import { SurrealInstance } from "@/lib/db";
+import { surrealInstance } from "@/lib/db";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import currentUserQuery from "@/queries/currentUser.surql?raw";
 import { MissingAuthenticationError } from "@/lib/errors";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { User } from "@/lib/models";
+import type { User } from "@/lib/models";
 import { LogOut } from "lucide-react";
 
 const Header = () => {
@@ -18,7 +18,7 @@ const Header = () => {
   const { data: currentUser } = useQuery({
     queryKey: ["users", "current"],
     queryFn: async (): Promise<User> => {
-      const result = await SurrealInstance.opiniatedQuery<User>(
+      const result = await surrealInstance.opiniatedQuery<User>(
         currentUserQuery
       );
 
@@ -33,7 +33,7 @@ const Header = () => {
   const signout = useMutation({
     mutationFn: async () => {
       localStorage.removeItem(ACCESS_TOKEN);
-      await SurrealInstance.invalidate();
+      await surrealInstance.invalidate();
 
       return true;
     },

@@ -1,24 +1,22 @@
-import { SurrealInstance } from "@/lib/db";
+import { surrealInstance } from "@/lib/db";
 import { useQuery } from "@tanstack/react-query";
 import roomsQuery from "@/queries/rooms.surql?raw";
-
-type Room = {
-  id: string;
-  name: string;
-};
+import type { Room as RoomType } from "@/lib/models";
+import Room from "./Room";
 
 const Rooms = () => {
   const { data: rooms } = useQuery({
     queryKey: ["rooms"],
-    queryFn: async (): Promise<Room[]> => {
-      const result = await SurrealInstance.opiniatedQuery<Room>(roomsQuery);
+    queryFn: async (): Promise<RoomType[]> => {
+      const response = await surrealInstance.opiniatedQuery<RoomType>(
+        roomsQuery
+      );
 
-      console.log(result);
-      if (!result?.[0]?.result) {
+      if (!response?.[0]?.result) {
         throw new Error();
       }
 
-      return result[0].result;
+      return response[0].result;
     },
   });
 
@@ -28,9 +26,13 @@ const Rooms = () => {
         Rooms
       </h3>
 
-      <ul>
+      <ul className="mt-6 flex flex-row gap-2">
         {rooms?.map((room) => {
-          return <li key={room.id}>{room.name}</li>;
+          return (
+            <li key={room.id}>
+              <Room room={room} />
+            </li>
+          );
         })}
       </ul>
     </>

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/popover";
 import { DB, NS, USER_SCOPE } from "@/constants/db";
 import { ACCESS_TOKEN } from "@/constants/storage";
-import { SurrealInstance } from "@/lib/db";
+import { surrealInstance } from "@/lib/db";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2, LogIn } from "lucide-react";
 import { z } from "zod";
@@ -60,7 +60,7 @@ const SignInPopover = () => {
 
   const signin = useMutation({
     mutationFn: async (props: SigninMutationProps) => {
-      const token = await SurrealInstance.signin({
+      const token = await surrealInstance.signin({
         NS,
         DB,
         SC: USER_SCOPE,

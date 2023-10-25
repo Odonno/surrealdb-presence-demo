@@ -1,7 +1,7 @@
 import Rooms from "@/components/Rooms";
 import Header from "@/components/Header";
-import { SurrealInstance } from "@/lib/db";
-import { User } from "@/lib/models";
+import { surrealInstance } from "@/lib/db";
+import type { User } from "@/lib/models";
 import { MissingAuthenticationError } from "@/lib/errors";
 import { useQuery } from "@tanstack/react-query";
 import currentUserQuery from "@/queries/currentUser.surql?raw";
@@ -10,15 +10,15 @@ const HomePage = () => {
   const { data: currentUser } = useQuery({
     queryKey: ["users", "current"],
     queryFn: async (): Promise<User> => {
-      const result = await SurrealInstance.opiniatedQuery<User>(
+      const response = await surrealInstance.opiniatedQuery<User>(
         currentUserQuery
       );
 
-      if (!result?.[0]?.result?.[0]) {
+      if (!response?.[0]?.result?.[0]) {
         throw new MissingAuthenticationError();
       }
 
-      return result[0].result[0];
+      return response[0].result[0];
     },
   });
 
