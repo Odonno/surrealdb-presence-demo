@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { surrealInstance } from "@/lib/db";
 import joinRoomQuery from "@/mutations/joinRoom.surql?raw";
 import leaveRoomQuery from "@/mutations/leaveRoom.surql?raw";
+import signalPresenceQuery from "@/mutations/signalPresence.surql?raw";
 import { Loader2 } from "lucide-react";
 import {
   Card,
@@ -12,15 +13,38 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useInterval } from "usehooks-ts";
+import { SECOND } from "@/constants/time";
 
 export type RoomProps = {
   room: RoomType;
 };
 
+const SIGNAL_PRESENCE_INTERVAL = 10 * SECOND;
+
 const Room = (props: RoomProps) => {
   const { room } = props;
 
   const queryClient = useQueryClient();
+
+  const signalPresence = useMutation({
+    mutationFn: async () => {
+      const response = await surrealInstance.query(signalPresenceQuery, {
+        room_id: room.id,
+      });
+
+      if (!response?.[0] || response[0].error) {
+        throw new Error();
+      }
+    },
+  });
+
+  useInterval(
+    () => {
+      signalPresence.mutate();
+    },
+    room.is_in_room ? SIGNAL_PRESENCE_INTERVAL : null
+  );
 
   const joinRoom = useMutation({
     mutationFn: async () => {
