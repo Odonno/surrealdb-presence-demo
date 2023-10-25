@@ -110,11 +110,21 @@ const Room = (props: RoomProps) => {
     <div>
       <Card>
         <CardHeader>
-          <CardTitle> {room.name}</CardTitle>
+          <CardTitle>{room.name}</CardTitle>
         </CardHeader>
+
         <CardContent>
-          <p>There are no user on this room...</p>
+          {room.number_of_active_users ? (
+            <p className="text-sm font-medium leading-none">
+              There are {room.number_of_active_users} user(s) in this room...
+            </p>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              There are no user in this room...
+            </p>
+          )}
         </CardContent>
+
         <CardFooter>
           {room.is_in_room ? (
             <Button

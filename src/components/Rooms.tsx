@@ -18,6 +18,8 @@ const Rooms = () => {
     },
   });
 
+  const isInOneRoom = (rooms || []).some((room) => room.is_in_room);
+
   return (
     <>
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
@@ -26,6 +28,10 @@ const Rooms = () => {
 
       <ul className="mt-6 flex flex-row gap-2">
         {rooms?.map((room) => {
+          if (isInOneRoom && !room.is_in_room) {
+            return null;
+          }
+
           return (
             <li key={room.id}>
               <Room room={room} />

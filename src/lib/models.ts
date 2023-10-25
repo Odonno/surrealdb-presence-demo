@@ -8,4 +8,5 @@ export type Room = {
   name: string;
   created_at: string;
   is_in_room: boolean;
+  number_of_active_users: number;
 };
