@@ -8,9 +8,7 @@ const Rooms = () => {
   const { data: rooms } = useQuery({
     queryKey: ["rooms"],
     queryFn: async (): Promise<RoomType[]> => {
-      const response = await surrealInstance.opiniatedQuery<RoomType>(
-        roomsQuery
-      );
+      const response = await surrealInstance.query<[RoomType[]]>(roomsQuery);
 
       if (!response?.[0]?.result) {
         throw new Error();

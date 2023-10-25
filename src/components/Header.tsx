@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import type { User } from "@/lib/models";
 import { LogOut } from "lucide-react";
+import CurrentUserPresence from "./CurrentUserPresence";
 
 const Header = () => {
   const queryClient = useQueryClient();
@@ -18,9 +19,7 @@ const Header = () => {
   const { data: currentUser } = useQuery({
     queryKey: ["users", "current"],
     queryFn: async (): Promise<User> => {
-      const result = await surrealInstance.opiniatedQuery<User>(
-        currentUserQuery
-      );
+      const result = await surrealInstance.query<[User[]]>(currentUserQuery);
 
       if (!result?.[0]?.result?.[0]) {
         throw new MissingAuthenticationError();
@@ -66,7 +65,7 @@ const Header = () => {
                 {currentUser.username}
               </span>
 
-              <span className="bg-green-500 w-2.5 h-2.5 rounded-full -ml-1 mt-1"></span>
+              <CurrentUserPresence />
             </div>
 
             <div className="flex justify-center items-center gap-12">

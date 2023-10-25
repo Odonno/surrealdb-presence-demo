@@ -33,7 +33,7 @@ const Room = (props: RoomProps) => {
         room_id: room.id,
       });
 
-      if (!response?.[0] || response[0].error) {
+      if (!response?.[0] || response[0].status !== "OK") {
         throw new Error();
       }
     },
@@ -52,7 +52,7 @@ const Room = (props: RoomProps) => {
         room_id: room.id,
       });
 
-      if (!response?.[0] || response[0].error) {
+      if (!response?.[0] || response[0].status !== "OK") {
         throw new Error();
       }
 
@@ -78,7 +78,7 @@ const Room = (props: RoomProps) => {
         room_id: room.id,
       });
 
-      if (!response?.[0] || response[0].error) {
+      if (!response?.[0] || response[0].status !== "OK") {
         throw new Error();
       }
 

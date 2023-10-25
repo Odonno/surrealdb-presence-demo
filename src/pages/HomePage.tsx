@@ -10,9 +10,7 @@ const HomePage = () => {
   const { data: currentUser } = useQuery({
     queryKey: ["users", "current"],
     queryFn: async (): Promise<User> => {
-      const response = await surrealInstance.opiniatedQuery<User>(
-        currentUserQuery
-      );
+      const response = await surrealInstance.query<[User[]]>(currentUserQuery);
 
       if (!response?.[0]?.result?.[0]) {
         throw new MissingAuthenticationError();
