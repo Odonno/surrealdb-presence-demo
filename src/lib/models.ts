@@ -1,6 +1,7 @@
 export type User = {
   username: string;
   avatar?: string;
+  avatarFallback: string;
 };
 
 export type Room = {
@@ -17,6 +18,7 @@ export type RoomUser = {
   user_id: string;
   username: string;
   avatar?: string;
+  avatarFallback: string;
   status: PresenceStatus;
   updated_at: string;
 };

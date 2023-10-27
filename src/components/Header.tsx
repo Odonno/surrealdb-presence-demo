@@ -56,9 +56,7 @@ const Header = () => {
                   src={currentUser.avatar}
                   alt={`${currentUser.username}`}
                 />
-                <AvatarFallback>
-                  {currentUser.username.slice(0, 2).toLocaleUpperCase()}
-                </AvatarFallback>
+                <AvatarFallback>{currentUser.avatarFallback}</AvatarFallback>
               </Avatar>
 
               <span className="text-lg font-semibold">

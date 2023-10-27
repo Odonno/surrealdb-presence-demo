@@ -110,9 +110,7 @@ const RoomUsers = (props: RoomUserProps) => {
         <li key={u.user_id} className="relative">
           <Avatar>
             <AvatarImage src={u.avatar} alt={`${u.username}`} />
-            <AvatarFallback>
-              {u.username.slice(0, 2).toLocaleUpperCase()}
-            </AvatarFallback>
+            <AvatarFallback>{u.avatarFallback}</AvatarFallback>
           </Avatar>
 
           <Presence

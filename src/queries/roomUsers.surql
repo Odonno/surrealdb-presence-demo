@@ -2,6 +2,7 @@ SELECT
     user.id AS user_id,
     user.username AS username,
     user.avatar AS avatar,
+    string::uppercase(string::slice(user.username, 0, 2)) AS avatarFallback,
     status,
     updated_at
 FROM presence
