@@ -1,6 +1,5 @@
 import { surrealInstance } from "@/lib/db";
 import currentUserPresenceQuery from "@/queries/currentUserPresence.surql?raw";
-import liveCurrentUserPresenceQuery from "@/queries/liveCurrentUserPresence.surql?raw";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import Presence from "./Presence";
@@ -27,9 +26,8 @@ const CurrentUserPresence = () => {
   const { data: liveQueryUuid } = useQuery({
     queryKey: ["users", "current", "presence", "live"],
     queryFn: async (): Promise<string> => {
-      const response = await surrealInstance.query<[string]>(
-        liveCurrentUserPresenceQuery
-      );
+      const query = `LIVE ${currentUserPresenceQuery}`;
+      const response = await surrealInstance.query<[string]>(query);
 
       if (!response?.[0]?.result) {
         throw new Error();

@@ -1,6 +1,5 @@
 import type { Room, RoomUser } from "@/lib/models";
 import roomUsersQuery from "@/queries/roomUsers.surql?raw";
-import liveRoomUsersQuery from "@/queries/liveRoomUsers.surql?raw";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { surrealInstance } from "@/lib/db";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -43,9 +42,7 @@ const RoomUsers = (props: RoomUserProps) => {
     queryFn: async (): Promise<string> => {
       // 💡 cannot use params with LIVE queries at the moment
       // see https://github.com/surrealdb/surrealdb/issues/2641
-
-      const query = liveRoomUsersQuery.replace("$room_id", room.id);
-
+      const query = `LIVE ${roomUsersQuery}`.replace("$room_id", room.id);
       const response = await surrealInstance.query<[string]>(query);
 
       if (!response?.[0]?.result) {
