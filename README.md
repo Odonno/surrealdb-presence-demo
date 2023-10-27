@@ -1,27 +1,62 @@
-# React + TypeScript + Vite
+# SurrealDB Presence Demo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a demo project on how to create a realtime presence web application using SurrealDB Live Queries.
 
-Currently, two official plugins are available:
+![Image of the SurrealDB Presence Demo project](./img/room-users.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech stack
 
-## Expanding the ESLint configuration
+This is a list of the most important technologies used in this project:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- React + TypeScript (Vite template)
+- TanStack Query
+- jotai (jotai-forms)
+- SurrealDB
+- surrealdb-migrations
 
-- Configure the top-level `parserOptions` property like this:
+## Features
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+- Authentication
+  - Sign up
+  - Sign in
+  - Sign out
+  - Display authenticated user details such as realtime presence
+- List of rooms with number of active users, with the ability to join a room
+- Selected room (last joined room)
+  - Display the list of users in rooms
+  - Show presence of each user
+  - Ability to leave the room
+
+Current configuration:
+
+- Signal user presence in room periodically (every 10 seconds)
+- Display presence status:
+  - **gray** - left
+  - **green** - < 2min of inactivity
+  - **orange** - < 10min of inactivity
+  - **red** - > 10min of inactivity
+
+## Get started
+
+1. Start a new SurrealDB instance locally
+
+```bash
+surreal start --log debug --user root --pass root memory --auth --allow-guests
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+2. Apply migrations
+
+```bash
+surrealdb-migrations apply
+```
+
+3. Install dependencies and run the web app
+
+```bash
+npm install
+npm run dev
+```
+
+4. Launch your web browser on the generated url (eg. http://localhost:5173/) and play with the app (create new accounts, join rooms, leave rooms)
+
+And voilà!
