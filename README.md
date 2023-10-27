@@ -60,3 +60,19 @@ npm run dev
 4. Launch your web browser on the generated url (eg. http://localhost:5173/) and play with the app (create new accounts, join rooms, leave rooms)
 
 And voilà!
+
+## Architecture
+
+This project is using the following architecture:
+
+- `/schemas` - list of SurrealDB tables
+- `/events` - list of SurrealDB events
+- `/migrations` - list of db migrations that will be automatically applied
+- `/src`
+  - `/components`
+  - `/pages`
+  - `/contexts` - Theme and SurrealDB providers
+  - `/queries` - surql query files to query the database, using SurrealDB tables
+  - `/mutations` - surql query files to create or update data, using SurrealDB events
+  - `/lib` - functions and app models
+  - `/constants`
