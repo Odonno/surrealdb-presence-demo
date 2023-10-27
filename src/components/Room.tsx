@@ -13,9 +13,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useInterval } from "usehooks-ts";
+import { useEffectOnce, useInterval } from "usehooks-ts";
 import { SECOND } from "@/constants/time";
 import RoomUsers from "./RoomUsers";
+import { usePageVisibility } from "react-page-visibility";
 
 export type RoomProps = {
   room: RoomType;
@@ -25,6 +26,10 @@ const SIGNAL_PRESENCE_INTERVAL = 10 * SECOND;
 
 const Room = (props: RoomProps) => {
   const { room } = props;
+
+  const isPageVisible = usePageVisibility();
+
+  const canSignalPresence = room.is_in_room && isPageVisible;
 
   const queryClient = useQueryClient();
 
@@ -44,8 +49,14 @@ const Room = (props: RoomProps) => {
     () => {
       signalPresence.mutate();
     },
-    room.is_in_room ? SIGNAL_PRESENCE_INTERVAL : null
+    canSignalPresence ? SIGNAL_PRESENCE_INTERVAL : null
   );
+
+  useEffectOnce(() => {
+    if (canSignalPresence) {
+      signalPresence.mutate();
+    }
+  });
 
   const joinRoom = useMutation({
     mutationFn: async () => {
