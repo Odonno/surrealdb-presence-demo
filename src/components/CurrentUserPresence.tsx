@@ -4,11 +4,12 @@ import liveCurrentUserPresenceQuery from "@/queries/liveCurrentUserPresence.surq
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import Presence from "./Presence";
+import { useEffectOnce } from "usehooks-ts";
 
 const CurrentUserPresence = () => {
   const queryClient = useQueryClient();
 
-  const { data: lastPresenceDate } = useQuery({
+  const { data: lastPresenceDate, isSuccess } = useQuery({
     queryKey: ["users", "current", "presence"],
     queryFn: async (): Promise<Date> => {
       const response = await surrealInstance.query<[string]>(
@@ -36,6 +37,7 @@ const CurrentUserPresence = () => {
 
       return response[0].result;
     },
+    enabled: isSuccess,
   });
 
   useEffect(() => {
@@ -62,6 +64,14 @@ const CurrentUserPresence = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [liveQueryUuid]);
+
+  useEffectOnce(() => {
+    return () => {
+      queryClient.invalidateQueries({
+        queryKey: ["users", "current", "presence"],
+      });
+    };
+  });
 
   return (
     <Presence lastPresenceDate={lastPresenceDate} className="-ml-1 mt-1" />

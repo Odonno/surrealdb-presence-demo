@@ -1,8 +1,9 @@
-import { createContext, useEffect } from "react";
+import { createContext } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { surrealInstance } from "@/lib/db";
 import { DB, NS, SURREAL_ENDPOINT } from "@/constants/db";
 import { ACCESS_TOKEN } from "@/constants/storage";
+import { useEffectOnce } from "usehooks-ts";
 
 type SurrealDbProviderProps = {
   children: React.ReactNode;
@@ -36,10 +37,9 @@ export function SurrealDbProvider({
     },
   });
 
-  useEffect(() => {
+  useEffectOnce(() => {
     connectDb.mutate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  });
 
   // TODO : loading screen & error
 

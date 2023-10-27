@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { useInterval } from "usehooks-ts";
 import { SECOND } from "@/constants/time";
+import RoomUsers from "./RoomUsers";
 
 export type RoomProps = {
   room: RoomType;
@@ -114,7 +115,9 @@ const Room = (props: RoomProps) => {
         </CardHeader>
 
         <CardContent>
-          {room.number_of_active_users ? (
+          {room.is_in_room ? (
+            <RoomUsers room={room} />
+          ) : room.number_of_active_users ? (
             <p className="text-sm font-medium leading-none">
               There are {room.number_of_active_users} user(s) in this room...
             </p>
