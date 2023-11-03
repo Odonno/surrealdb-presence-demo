@@ -1,9 +1,8 @@
-import { surrealInstance } from "@/lib/db";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
 import Presence from "./Presence";
 import { useEffectOnce } from "usehooks-ts";
 import { queryKeys } from "@/lib/queryKeys";
+import { useLiveQuery } from "@/hooks/useLiveQuery";
 
 const CurrentUserPresence = () => {
   const queryClient = useQueryClient();
@@ -17,30 +16,14 @@ const CurrentUserPresence = () => {
     enabled: isSuccess,
   });
 
-  useEffect(() => {
-    if (liveQueryUuid) {
-      const fn = async () => {
-        await surrealInstance.listenLive(
-          liveQueryUuid,
-          ({ action, result }) => {
-            if (action === "CREATE" || action === "UPDATE") {
-              queryClient.setQueryData(
-                queryKeys.users.current._ctx.presence.queryKey,
-                new Date(result as unknown as string)
-              );
-            }
-          }
-        );
-      };
-
-      fn();
-
-      return () => {
-        surrealInstance.kill(liveQueryUuid);
-      };
+  useLiveQuery(liveQueryUuid, ({ action, result }) => {
+    if (action === "CREATE" || action === "UPDATE") {
+      queryClient.setQueryData(
+        queryKeys.users.current._ctx.presence.queryKey,
+        new Date(result as unknown as string)
+      );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [liveQueryUuid]);
+  });
 
   useEffectOnce(() => {
     return () => {

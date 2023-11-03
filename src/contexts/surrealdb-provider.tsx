@@ -1,15 +1,25 @@
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { surrealInstance } from "@/lib/db";
 import { DB, NS, SURREAL_ENDPOINT } from "@/constants/db";
 import { ACCESS_TOKEN } from "@/constants/storage";
 import { useEffectOnce } from "usehooks-ts";
+import { Surreal } from "surrealdb.js";
 
 type SurrealDbProviderProps = {
   children: React.ReactNode;
 };
 
-const ThemeProviderContext = createContext(undefined);
+type SurrealDbProviderState = {
+  db: Surreal;
+};
+
+const initialState: SurrealDbProviderState = {
+  db: surrealInstance,
+};
+
+const SurrealDbProviderContext =
+  createContext<SurrealDbProviderState>(initialState);
 
 export function SurrealDbProvider({
   children,
@@ -41,11 +51,22 @@ export function SurrealDbProvider({
     connectDb.mutate();
   });
 
+  const value = initialState;
+
   // TODO : loading screen & error
 
   return (
-    <ThemeProviderContext.Provider {...props} value={undefined}>
+    <SurrealDbProviderContext.Provider {...props} value={value}>
       {connectDb.isSuccess ? children : null}
-    </ThemeProviderContext.Provider>
+    </SurrealDbProviderContext.Provider>
   );
 }
+
+export const useSurrealDb = () => {
+  const context = useContext(SurrealDbProviderContext);
+
+  if (context === undefined)
+    throw new Error("useSurrealDb must be used within a SurrealDbProvider");
+
+  return context;
+};
