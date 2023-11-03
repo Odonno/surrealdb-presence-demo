@@ -31,27 +31,31 @@ const RoomUsers = (props: RoomUserProps) => {
     enabled: room.is_in_room && isSuccess,
   });
 
-  useLiveQuery(liveQueryUuid, ({ action, result }) => {
-    if (action === "CREATE") {
-      queryClient.setQueryData(
-        queryKeys.rooms.detail(room.id)._ctx.users.queryKey,
-        (old: RoomUser[]) => [...old, result as unknown as RoomUser]
-      );
-    }
+  useLiveQuery({
+    queryUuid: liveQueryUuid ?? "",
+    callback: ({ action, result }) => {
+      if (action === "CREATE") {
+        queryClient.setQueryData(
+          queryKeys.rooms.detail(room.id)._ctx.users.queryKey,
+          (old: RoomUser[]) => [...old, result as unknown as RoomUser]
+        );
+      }
 
-    if (action === "UPDATE") {
-      queryClient.setQueryData(
-        queryKeys.rooms.detail(room.id)._ctx.users.queryKey,
-        (old: RoomUser[]) =>
-          old.map((u) => {
-            if (u.user_id === (result as unknown as RoomUser).user_id) {
-              return result as unknown as RoomUser;
-            }
+      if (action === "UPDATE") {
+        queryClient.setQueryData(
+          queryKeys.rooms.detail(room.id)._ctx.users.queryKey,
+          (old: RoomUser[]) =>
+            old.map((u) => {
+              if (u.user_id === (result as unknown as RoomUser).user_id) {
+                return result as unknown as RoomUser;
+              }
 
-            return u;
-          })
-      );
-    }
+              return u;
+            })
+        );
+      }
+    },
+    enabled: Boolean(liveQueryUuid),
   });
 
   useEffectOnce(() => {

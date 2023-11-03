@@ -25,13 +25,17 @@ const CurrentUserPresence = () => {
     enabled: isSuccess,
   });
 
-  useLiveQuery(liveQueryUuid, ({ action, result }) => {
-    if (action === "CREATE" || action === "UPDATE") {
-      queryClient.setQueryData(
-        queryKeys.users.current._ctx.presence.queryKey,
-        new Date(result as unknown as string)
-      );
-    }
+  useLiveQuery({
+    queryUuid: liveQueryUuid ?? "",
+    callback: ({ action, result }) => {
+      if (action === "CREATE" || action === "UPDATE") {
+        queryClient.setQueryData(
+          queryKeys.users.current._ctx.presence.queryKey,
+          new Date(result as unknown as string)
+        );
+      }
+    },
+    enabled: Boolean(liveQueryUuid),
   });
 
   useEffectOnce(() => {
