@@ -1,10 +1,3 @@
-import { getCurrentUserAsync } from "@/api/currentUser";
-import {
-  getCurrentUserPresenceAsync,
-  getCurrentUserPresenceLiveAsync,
-} from "@/api/currentUserPresence";
-import { getRoomUsersAsync, getRoomUsersLiveAsync } from "@/api/roomUsers";
-import { getRoomsAsync } from "@/api/rooms";
 import {
   createQueryKeys,
   mergeQueryKeys,
@@ -13,15 +6,12 @@ import {
 const usersKeys = createQueryKeys("users", {
   current: {
     queryKey: null,
-    queryFn: getCurrentUserAsync,
     contextQueries: {
       presence: {
         queryKey: null,
-        queryFn: getCurrentUserPresenceAsync,
         contextQueries: {
           live: {
             queryKey: null,
-            queryFn: getCurrentUserPresenceLiveAsync,
           },
         },
       },
@@ -32,7 +22,6 @@ const usersKeys = createQueryKeys("users", {
 export const roomsKeys = createQueryKeys("rooms", {
   list: {
     queryKey: null,
-    queryFn: getRoomsAsync,
   },
   detail: (roomId: string) => ({
     queryKey: [roomId],
@@ -40,11 +29,9 @@ export const roomsKeys = createQueryKeys("rooms", {
     contextQueries: {
       users: {
         queryKey: null,
-        queryFn: () => getRoomUsersAsync(roomId),
         contextQueries: {
           live: {
             queryKey: null,
-            queryFn: () => getRoomUsersLiveAsync(roomId),
           },
         },
       },

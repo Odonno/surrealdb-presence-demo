@@ -5,6 +5,7 @@ import Presence from "./Presence";
 import { useEffectOnce } from "usehooks-ts";
 import { queryKeys } from "@/lib/queryKeys";
 import { useLiveQuery } from "@/hooks/useLiveQuery";
+import { useRoomUsersAsync, useRoomUsersLiveAsync } from "@/api/roomUsers";
 
 export type RoomUserProps = {
   room: Room;
@@ -15,13 +16,18 @@ const RoomUsers = (props: RoomUserProps) => {
 
   const queryClient = useQueryClient();
 
+  const getRoomUsersAsync = useRoomUsersAsync(room.id);
+  const getRoomUsersLiveAsync = useRoomUsersLiveAsync(room.id);
+
   const { data: users, isSuccess } = useQuery({
     ...queryKeys.rooms.detail(room.id)._ctx.users,
+    queryFn: getRoomUsersAsync,
     enabled: room.is_in_room,
   });
 
   const { data: liveQueryUuid } = useQuery({
     ...queryKeys.rooms.detail(room.id)._ctx.users._ctx.live,
+    queryFn: getRoomUsersLiveAsync,
     enabled: room.is_in_room && isSuccess,
   });
 

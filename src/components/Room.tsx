@@ -1,7 +1,6 @@
 import type { Room as RoomType } from "@/lib/models";
 import { Button } from "./ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { surrealInstance } from "@/lib/db";
 import joinRoomQuery from "@/mutations/joinRoom.surql?raw";
 import leaveRoomQuery from "@/mutations/leaveRoom.surql?raw";
 import signalPresenceQuery from "@/mutations/signalPresence.surql?raw";
@@ -18,6 +17,7 @@ import { SECOND } from "@/constants/time";
 import RoomUsers from "./RoomUsers";
 import { usePageVisibility } from "react-page-visibility";
 import { queryKeys } from "@/lib/queryKeys";
+import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 
 export type RoomProps = {
   room: RoomType;
@@ -33,10 +33,11 @@ const Room = (props: RoomProps) => {
   const canSignalPresence = room.is_in_room && isPageVisible;
 
   const queryClient = useQueryClient();
+  const dbClient = useSurrealDbClient();
 
   const signalPresence = useMutation({
     mutationFn: async () => {
-      const response = await surrealInstance.query(signalPresenceQuery, {
+      const response = await dbClient.query(signalPresenceQuery, {
         room_id: room.id,
       });
 
@@ -61,7 +62,7 @@ const Room = (props: RoomProps) => {
 
   const joinRoom = useMutation({
     mutationFn: async () => {
-      const response = await surrealInstance.query(joinRoomQuery, {
+      const response = await dbClient.query(joinRoomQuery, {
         room_id: room.id,
       });
 
@@ -90,7 +91,7 @@ const Room = (props: RoomProps) => {
 
   const leaveRoom = useMutation({
     mutationFn: async () => {
-      const response = await surrealInstance.query(leaveRoomQuery, {
+      const response = await dbClient.query(leaveRoomQuery, {
         room_id: room.id,
       });
 

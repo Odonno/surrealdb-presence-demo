@@ -1,4 +1,4 @@
-import { useSurrealDb } from "@/contexts/surrealdb-provider";
+import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 import { LiveQueryResponse } from "node_modules/surrealdb.js/esm/types";
 import { useEffect } from "react";
 
@@ -8,16 +8,16 @@ export const useLiveQuery = <
   queryUuid: string | undefined,
   callback: (data: LiveQueryResponse<T>) => unknown
 ) => {
-  const { db } = useSurrealDb();
+  const dbClient = useSurrealDbClient();
 
   useEffect(() => {
     if (queryUuid) {
       const runLiveQuery = async () => {
-        await db.listenLive(queryUuid, callback);
+        await dbClient.listenLive(queryUuid, callback);
       };
 
       const clearLiveQuery = async () => {
-        await db.kill(queryUuid);
+        await dbClient.kill(queryUuid);
       };
 
       const handleBeforeUnload = () => {

@@ -1,10 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import Room from "./Room";
 import { queryKeys } from "@/lib/queryKeys";
+import { useRoomsAsync } from "@/api/rooms";
 
 const Rooms = () => {
+  const getRoomsAsync = useRoomsAsync();
+
   const { data: rooms } = useQuery({
     ...queryKeys.rooms.list,
+    queryFn: getRoomsAsync,
   });
 
   const isInOneRoom = (rooms || []).some((room) => room.is_in_room);

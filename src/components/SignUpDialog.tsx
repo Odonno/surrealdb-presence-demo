@@ -16,9 +16,9 @@ import { useAtomValue } from "jotai";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DB, NS, USER_SCOPE } from "@/constants/db";
 import { ACCESS_TOKEN } from "@/constants/storage";
-import { surrealInstance } from "@/lib/db";
 import { Loader2 } from "lucide-react";
 import { queryKeys } from "@/lib/queryKeys";
+import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 
 const usernameSchema = z.string().min(2);
 const emailSchema = z.string().email();
@@ -115,10 +115,11 @@ const SignUpDialog = () => {
     useAtomValue(formControlAtom);
 
   const queryClient = useQueryClient();
+  const dbClient = useSurrealDbClient();
 
   const signup = useMutation({
     mutationFn: async (props: SignupMutationProps) => {
-      const token = await surrealInstance.signup({
+      const token = await dbClient.signup({
         NS,
         DB,
         SC: USER_SCOPE,

@@ -1,25 +1,35 @@
-import { surrealInstance } from "@/lib/db";
+import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 import currentUserPresenceQuery from "@/queries/currentUserPresence.surql?raw";
 
-export const getCurrentUserPresenceAsync = async (): Promise<Date> => {
-  const response = await surrealInstance.query<[string]>(
-    currentUserPresenceQuery
-  );
+export const useCurrentUserPresenceAsync = (): (() => Promise<Date>) => {
+  const dbClient = useSurrealDbClient();
 
-  if (!response?.[0]?.result) {
-    throw new Error();
-  }
+  const fn = async () => {
+    const response = await dbClient.query<[string]>(currentUserPresenceQuery);
 
-  return new Date(response[0].result);
+    if (!response?.[0]?.result) {
+      throw new Error();
+    }
+
+    return new Date(response[0].result);
+  };
+
+  return fn;
 };
 
-export const getCurrentUserPresenceLiveAsync = async (): Promise<string> => {
-  const query = `LIVE ${currentUserPresenceQuery}`;
-  const response = await surrealInstance.query<[string]>(query);
+export const useCurrentUserPresenceLiveAsync = (): (() => Promise<string>) => {
+  const dbClient = useSurrealDbClient();
 
-  if (!response?.[0]?.result) {
-    throw new Error();
-  }
+  const fn = async () => {
+    const query = `LIVE ${currentUserPresenceQuery}`;
+    const response = await dbClient.query<[string]>(query);
 
-  return response[0].result;
+    if (!response?.[0]?.result) {
+      throw new Error();
+    }
+
+    return response[0].result;
+  };
+
+  return fn;
 };

@@ -1,14 +1,20 @@
-import { surrealInstance } from "@/lib/db";
+import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 import { MissingAuthenticationError } from "@/lib/errors";
 import type { User } from "@/lib/models";
 import currentUserQuery from "@/queries/currentUser.surql?raw";
 
-export const getCurrentUserAsync = async (): Promise<User> => {
-  const result = await surrealInstance.query<[User[]]>(currentUserQuery);
+export const useCurrentUserAsync = (): (() => Promise<User>) => {
+  const dbClient = useSurrealDbClient();
 
-  if (!result?.[0]?.result?.[0]) {
-    throw new MissingAuthenticationError();
-  }
+  const fn = async () => {
+    const result = await dbClient.query<[User[]]>(currentUserQuery);
 
-  return result[0].result[0];
+    if (!result?.[0]?.result?.[0]) {
+      throw new MissingAuthenticationError();
+    }
+
+    return result[0].result[0];
+  };
+
+  return fn;
 };

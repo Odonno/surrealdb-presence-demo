@@ -8,13 +8,13 @@ import {
 } from "@/components/ui/popover";
 import { DB, NS, USER_SCOPE } from "@/constants/db";
 import { ACCESS_TOKEN } from "@/constants/storage";
-import { surrealInstance } from "@/lib/db";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2, LogIn } from "lucide-react";
 import { z } from "zod";
 import { atomWithFormControls, atomWithValidate } from "jotai-form";
 import { useAtomValue } from "jotai";
 import { queryKeys } from "@/lib/queryKeys";
+import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 
 const emailSchema = z.string().email();
 const passwordSchema = z.string().min(6);
@@ -58,12 +58,13 @@ const SignInPopover = () => {
     useAtomValue(formControlAtom);
 
   const queryClient = useQueryClient();
+  const dbClient = useSurrealDbClient();
 
   const signin = useMutation({
     mutationFn: async (props: SigninMutationProps) => {
-      const token = await surrealInstance.signin({
-        NS,
-        DB,
+      const token = await dbClient.signin({
+        NS: NS,
+        DB: DB,
         SC: USER_SCOPE,
         ...props,
       });

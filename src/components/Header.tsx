@@ -3,25 +3,28 @@ import SignInPopover from "@/components/SignInPopover";
 import SignUpDialog from "@/components/SignUpDialog";
 import { Button } from "@/components/ui/button";
 import { ACCESS_TOKEN } from "@/constants/storage";
-import { surrealInstance } from "@/lib/db";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { LogOut } from "lucide-react";
 import CurrentUserPresence from "./CurrentUserPresence";
-import { queryKeys } from "@/lib/queryKeys";
+import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
+import type { User } from "@/lib/models";
 
-const Header = () => {
+type HeaderProps = {
+  currentUser: User | undefined;
+};
+
+const Header = (props: HeaderProps) => {
+  const { currentUser } = props;
+
   const queryClient = useQueryClient();
-
-  const { data: currentUser } = useQuery({
-    ...queryKeys.users.current,
-  });
+  const dbClient = useSurrealDbClient();
 
   const signout = useMutation({
     mutationFn: async () => {
       localStorage.removeItem(ACCESS_TOKEN);
-      await surrealInstance.invalidate();
+      await dbClient.invalidate();
 
       return true;
     },
