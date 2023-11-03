@@ -5,28 +5,17 @@ import { Button } from "@/components/ui/button";
 import { ACCESS_TOKEN } from "@/constants/storage";
 import { surrealInstance } from "@/lib/db";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import currentUserQuery from "@/queries/currentUser.surql?raw";
-import { MissingAuthenticationError } from "@/lib/errors";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import type { User } from "@/lib/models";
 import { LogOut } from "lucide-react";
 import CurrentUserPresence from "./CurrentUserPresence";
+import { queryKeys } from "@/lib/queryKeys";
 
 const Header = () => {
   const queryClient = useQueryClient();
 
   const { data: currentUser } = useQuery({
-    queryKey: ["users", "current"],
-    queryFn: async (): Promise<User> => {
-      const result = await surrealInstance.query<[User[]]>(currentUserQuery);
-
-      if (!result?.[0]?.result?.[0]) {
-        throw new MissingAuthenticationError();
-      }
-
-      return result[0].result[0];
-    },
+    ...queryKeys.users.current,
   });
 
   const signout = useMutation({

@@ -17,6 +17,7 @@ import { useEffectOnce, useInterval } from "usehooks-ts";
 import { SECOND } from "@/constants/time";
 import RoomUsers from "./RoomUsers";
 import { usePageVisibility } from "react-page-visibility";
+import { queryKeys } from "@/lib/queryKeys";
 
 export type RoomProps = {
   room: RoomType;
@@ -69,18 +70,21 @@ const Room = (props: RoomProps) => {
       }
 
       // optimistic update
-      queryClient.setQueryData(["rooms"], (old: RoomType[]) => {
-        return old.map((r) => {
-          if (r.id === room.id) {
-            return {
-              ...r,
-              is_in_room: true,
-            };
-          }
+      queryClient.setQueryData(
+        queryKeys.rooms.list.queryKey,
+        (old: RoomType[]) => {
+          return old.map((r) => {
+            if (r.id === room.id) {
+              return {
+                ...r,
+                is_in_room: true,
+              };
+            }
 
-          return r;
-        });
-      });
+            return r;
+          });
+        }
+      );
     },
   });
 
@@ -95,18 +99,21 @@ const Room = (props: RoomProps) => {
       }
 
       // optimistic update
-      queryClient.setQueryData(["rooms"], (old: RoomType[]) => {
-        return old.map((r) => {
-          if (r.id === room.id) {
-            return {
-              ...r,
-              is_in_room: false,
-            };
-          }
+      queryClient.setQueryData(
+        queryKeys.rooms.list.queryKey,
+        (old: RoomType[]) => {
+          return old.map((r) => {
+            if (r.id === room.id) {
+              return {
+                ...r,
+                is_in_room: false,
+              };
+            }
 
-          return r;
-        });
-      });
+            return r;
+          });
+        }
+      );
     },
   });
 

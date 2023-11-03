@@ -1,12 +1,11 @@
 import type { Room, RoomUser } from "@/lib/models";
-import roomUsersQuery from "@/queries/roomUsers.surql?raw";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { surrealInstance } from "@/lib/db";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Presence from "./Presence";
 import { useEffect } from "react";
-import { sortBy } from "remeda";
 import { useEffectOnce } from "usehooks-ts";
+import { queryKeys } from "@/lib/queryKeys";
 
 export type RoomUserProps = {
   room: Room;
@@ -18,39 +17,12 @@ const RoomUsers = (props: RoomUserProps) => {
   const queryClient = useQueryClient();
 
   const { data: users, isSuccess } = useQuery({
-    queryKey: ["rooms", room.id, "users"],
-    queryFn: async () => {
-      const response = await surrealInstance.query<[RoomUser[]]>(
-        roomUsersQuery,
-        {
-          room_id: room.id,
-        }
-      );
-
-      if (!response?.[0] || response[0].status !== "OK") {
-        throw new Error();
-      }
-
-      const users = response[0].result;
-      return sortBy(users, [(u) => u.updated_at, "desc"]);
-    },
+    ...queryKeys.rooms.detail(room.id)._ctx.users,
     enabled: room.is_in_room,
   });
 
   const { data: liveQueryUuid } = useQuery({
-    queryKey: ["rooms", room.id, "users", "live"],
-    queryFn: async (): Promise<string> => {
-      // 💡 cannot use params with LIVE queries at the moment
-      // see https://github.com/surrealdb/surrealdb/issues/2641
-      const query = `LIVE ${roomUsersQuery}`.replace("$room_id", room.id);
-      const response = await surrealInstance.query<[string]>(query);
-
-      if (!response?.[0]?.result) {
-        throw new Error();
-      }
-
-      return response[0].result;
-    },
+    ...queryKeys.rooms.detail(room.id)._ctx.users._ctx.live,
     enabled: room.is_in_room && isSuccess,
   });
 
@@ -62,14 +34,14 @@ const RoomUsers = (props: RoomUserProps) => {
           ({ action, result }) => {
             if (action === "CREATE") {
               queryClient.setQueryData(
-                ["rooms", room.id, "users"],
+                queryKeys.rooms.detail(room.id)._ctx.users.queryKey,
                 (old: RoomUser[]) => [...old, result as unknown as RoomUser]
               );
             }
 
             if (action === "UPDATE") {
               queryClient.setQueryData(
-                ["rooms", room.id, "users"],
+                queryKeys.rooms.detail(room.id)._ctx.users.queryKey,
                 (old: RoomUser[]) =>
                   old.map((u) => {
                     if (u.user_id === (result as unknown as RoomUser).user_id) {
@@ -96,7 +68,7 @@ const RoomUsers = (props: RoomUserProps) => {
   useEffectOnce(() => {
     return () => {
       queryClient.invalidateQueries({
-        queryKey: ["rooms", room.id, "users"],
+        queryKey: queryKeys.rooms.detail(room.id)._ctx.users.queryKey,
       });
     };
   });

@@ -1,40 +1,19 @@
 import { surrealInstance } from "@/lib/db";
-import currentUserPresenceQuery from "@/queries/currentUserPresence.surql?raw";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import Presence from "./Presence";
 import { useEffectOnce } from "usehooks-ts";
+import { queryKeys } from "@/lib/queryKeys";
 
 const CurrentUserPresence = () => {
   const queryClient = useQueryClient();
 
   const { data: lastPresenceDate, isSuccess } = useQuery({
-    queryKey: ["users", "current", "presence"],
-    queryFn: async (): Promise<Date> => {
-      const response = await surrealInstance.query<[string]>(
-        currentUserPresenceQuery
-      );
-
-      if (!response?.[0]?.result) {
-        throw new Error();
-      }
-
-      return new Date(response[0].result);
-    },
+    ...queryKeys.users.current._ctx.presence,
   });
 
   const { data: liveQueryUuid } = useQuery({
-    queryKey: ["users", "current", "presence", "live"],
-    queryFn: async (): Promise<string> => {
-      const query = `LIVE ${currentUserPresenceQuery}`;
-      const response = await surrealInstance.query<[string]>(query);
-
-      if (!response?.[0]?.result) {
-        throw new Error();
-      }
-
-      return response[0].result;
-    },
+    ...queryKeys.users.current._ctx.presence._ctx.live,
     enabled: isSuccess,
   });
 
@@ -46,7 +25,7 @@ const CurrentUserPresence = () => {
           ({ action, result }) => {
             if (action === "CREATE" || action === "UPDATE") {
               queryClient.setQueryData(
-                ["users", "current", "presence"],
+                queryKeys.users.current._ctx.presence.queryKey,
                 new Date(result as unknown as string)
               );
             }
@@ -66,7 +45,7 @@ const CurrentUserPresence = () => {
   useEffectOnce(() => {
     return () => {
       queryClient.invalidateQueries({
-        queryKey: ["users", "current", "presence"],
+        queryKey: queryKeys.users.current._ctx.presence.queryKey,
       });
     };
   });

@@ -18,6 +18,7 @@ import { DB, NS, USER_SCOPE } from "@/constants/db";
 import { ACCESS_TOKEN } from "@/constants/storage";
 import { surrealInstance } from "@/lib/db";
 import { Loader2 } from "lucide-react";
+import { queryKeys } from "@/lib/queryKeys";
 
 const usernameSchema = z.string().min(2);
 const emailSchema = z.string().email();
@@ -131,7 +132,7 @@ const SignUpDialog = () => {
       return !!token;
     },
     onSettled: () => {
-      queryClient.resetQueries({ queryKey: ["users", "current"] });
+      queryClient.resetQueries({ queryKey: queryKeys.users.current.queryKey });
     },
   });
 

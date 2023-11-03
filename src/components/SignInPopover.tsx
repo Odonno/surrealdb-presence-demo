@@ -14,6 +14,7 @@ import { Loader2, LogIn } from "lucide-react";
 import { z } from "zod";
 import { atomWithFormControls, atomWithValidate } from "jotai-form";
 import { useAtomValue } from "jotai";
+import { queryKeys } from "@/lib/queryKeys";
 
 const emailSchema = z.string().email();
 const passwordSchema = z.string().min(6);
@@ -74,7 +75,7 @@ const SignInPopover = () => {
       return !!token;
     },
     onSettled: () => {
-      queryClient.resetQueries({ queryKey: ["users", "current"] });
+      queryClient.resetQueries({ queryKey: queryKeys.users.current.queryKey });
     },
   });
 
