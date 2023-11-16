@@ -54,8 +54,15 @@ type SigninMutationProps = {
 };
 
 const SignInPopover = () => {
-  const { values, isValid, handleOnChange, handleOnBlur, handleOnFocus } =
-    useAtomValue(formControlAtom);
+  const {
+    values,
+    isValid,
+    touched,
+    fieldErrors,
+    handleOnChange,
+    handleOnBlur,
+    handleOnFocus,
+  } = useAtomValue(formControlAtom);
 
   const queryClient = useQueryClient();
   const dbClient = useSurrealDbClient();
@@ -98,14 +105,11 @@ const SignInPopover = () => {
 
       <PopoverContent className="w-96">
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="email" className="text-right">
-              Email
-            </Label>
+          <div className="grid gap-2">
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
-              className="col-span-3"
               value={values.email}
               onChange={(e) => {
                 handleOnChange("email")(e.target.value);
@@ -113,15 +117,18 @@ const SignInPopover = () => {
               onFocus={handleOnFocus("email")}
               onBlur={handleOnBlur("email")}
             />
+            {touched.email && fieldErrors.email ? (
+              <p className="text-sm font-medium text-destructive">
+                {fieldErrors.email[0].message}
+              </p>
+            ) : null}
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="password" className="text-right">
-              Password
-            </Label>
+
+          <div className="grid gap-2">
+            <Label htmlFor="password">Password</Label>
             <Input
               id="password"
               type="password"
-              className="col-span-3"
               value={values.password}
               onChange={(e) => {
                 handleOnChange("password")(e.target.value);
@@ -129,6 +136,11 @@ const SignInPopover = () => {
               onFocus={handleOnFocus("password")}
               onBlur={handleOnBlur("password")}
             />
+            {touched.password && fieldErrors.password ? (
+              <p className="text-sm font-medium text-destructive">
+                {fieldErrors.password[0].message}
+              </p>
+            ) : null}
           </div>
         </div>
 

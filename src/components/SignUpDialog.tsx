@@ -111,8 +111,16 @@ type SignupMutationProps = {
 };
 
 const SignUpDialog = () => {
-  const { values, isValid, handleOnChange, handleOnBlur, handleOnFocus } =
-    useAtomValue(formControlAtom);
+  const {
+    values,
+    isValid,
+    touched,
+    fieldErrors,
+    error,
+    handleOnChange,
+    handleOnBlur,
+    handleOnFocus,
+  } = useAtomValue(formControlAtom);
 
   const queryClient = useQueryClient();
   const dbClient = useSurrealDbClient();
@@ -151,20 +159,17 @@ const SignUpDialog = () => {
         <Button variant="default">Sign up</Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[580px]">
+      <DialogContent className="sm:max-w-[460px]">
         <DialogHeader>
           <DialogTitle>Sign up</DialogTitle>
           <DialogDescription>Registers a new acount.</DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="username" className="text-right">
-              Username
-            </Label>
+          <div className="grid gap-2">
+            <Label htmlFor="username">Username</Label>
             <Input
               id="username"
-              className="col-span-3"
               value={values.username}
               onChange={(e) => {
                 handleOnChange("username")(e.target.value);
@@ -172,16 +177,18 @@ const SignUpDialog = () => {
               onFocus={handleOnFocus("username")}
               onBlur={handleOnBlur("username")}
             />
+            {touched.username && fieldErrors.username ? (
+              <p className="text-sm font-medium text-destructive">
+                {fieldErrors.username[0].message}
+              </p>
+            ) : null}
           </div>
 
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="email" className="text-right">
-              Email
-            </Label>
+          <div className="grid gap-2">
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
-              className="col-span-3"
               value={values.email}
               onChange={(e) => {
                 handleOnChange("email")(e.target.value);
@@ -189,15 +196,16 @@ const SignUpDialog = () => {
               onFocus={handleOnFocus("email")}
               onBlur={handleOnBlur("email")}
             />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="confirm-email" className="text-right">
-              Confirm email
-            </Label>
+            {touched.email && fieldErrors.email ? (
+              <p className="text-sm font-medium text-destructive">
+                {fieldErrors.email[0].message}
+              </p>
+            ) : null}
+
+            <Label htmlFor="confirm-email">Confirm email</Label>
             <Input
               id="confirm-email"
               type="email"
-              className="col-span-3"
               value={values.confirmEmail}
               onChange={(e) => {
                 handleOnChange("confirmEmail")(e.target.value);
@@ -205,16 +213,18 @@ const SignUpDialog = () => {
               onFocus={handleOnFocus("confirmEmail")}
               onBlur={handleOnBlur("confirmEmail")}
             />
+            {touched.confirmEmail && fieldErrors.confirmEmail ? (
+              <p className="text-sm font-medium text-destructive">
+                {fieldErrors.confirmEmail[0].message}
+              </p>
+            ) : null}
           </div>
 
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="password" className="text-right">
-              Password
-            </Label>
+          <div className="grid gap-2">
+            <Label htmlFor="password">Password</Label>
             <Input
               id="password"
               type="password"
-              className="col-span-3"
               value={values.password}
               onChange={(e) => {
                 handleOnChange("password")(e.target.value);
@@ -222,15 +232,16 @@ const SignUpDialog = () => {
               onFocus={handleOnFocus("password")}
               onBlur={handleOnBlur("password")}
             />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="confirm-password" className="text-right">
-              Confirm password
-            </Label>
+            {touched.password && fieldErrors.password ? (
+              <p className="text-sm font-medium text-destructive">
+                {fieldErrors.password[0].message}
+              </p>
+            ) : null}
+
+            <Label htmlFor="confirm-password">Confirm password</Label>
             <Input
               id="confirm-password"
               type="password"
-              className="col-span-3"
               value={values.confirmPassword}
               onChange={(e) => {
                 handleOnChange("confirmPassword")(e.target.value);
@@ -238,19 +249,32 @@ const SignUpDialog = () => {
               onFocus={handleOnFocus("confirmPassword")}
               onBlur={handleOnBlur("confirmPassword")}
             />
+            {touched.confirmPassword && fieldErrors.confirmPassword ? (
+              <p className="text-sm font-medium text-destructive">
+                {fieldErrors.confirmPassword[0].message}
+              </p>
+            ) : null}
           </div>
         </div>
-        <DialogFooter>
+
+        <DialogFooter className="flex !flex-col items-end">
           <Button
             type="submit"
             disabled={!isValid || signup.isPending}
             onClick={handleSignUp}
+            className="block"
           >
             {signup.isPending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : null}
             Register
           </Button>
+
+          {error ? (
+            <p className="mt-2 text-sm font-medium text-destructive">
+              {(error as Error).message}
+            </p>
+          ) : null}
         </DialogFooter>
       </DialogContent>
     </Dialog>
