@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import joinRoomQuery from "@/mutations/joinRoom.surql?raw";
 import leaveRoomQuery from "@/mutations/leaveRoom.surql?raw";
 import signalPresenceQuery from "@/mutations/signalPresence.surql?raw";
-import { Loader2 } from "lucide-react";
+import { DoorClosed, DoorOpen, Loader2 } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -157,8 +157,10 @@ const Room = (props: RoomProps) => {
             >
               {leaveRoom.isPending ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : null}
-              Leave room
+              ) : (
+                <DoorOpen className="mr-2 h-4 w-4" />
+              )}
+              Leave
             </Button>
           ) : (
             <Button
@@ -169,8 +171,10 @@ const Room = (props: RoomProps) => {
             >
               {joinRoom.isPending ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : null}
-              Join room
+              ) : (
+                <DoorClosed className="mr-2 h-4 w-4" />
+              )}
+              Join this room
             </Button>
           )}
         </CardFooter>
