@@ -7,13 +7,13 @@ export const useCurrentUserAsync = (): (() => Promise<User>) => {
   const dbClient = useSurrealDbClient();
 
   const fn = async () => {
-    const result = await dbClient.query<[User[]]>(currentUserQuery);
+    const response = await dbClient.query<[User[]]>(currentUserQuery);
 
-    if (!result?.[0]?.result?.[0]) {
+    if (!response?.[0]?.result?.[0]) {
       throw new MissingAuthenticationError();
     }
 
-    return result[0].result[0];
+    return response[0].result[0];
   };
 
   return fn;

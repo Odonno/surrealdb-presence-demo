@@ -7,7 +7,7 @@ export const useCurrentUserPresenceAsync = (): (() => Promise<Date>) => {
   const fn = async () => {
     const response = await dbClient.query<[string]>(currentUserPresenceQuery);
 
-    if (!response?.[0]?.result) {
+    if (!response?.[0]?.result?.[0]) {
       throw new Error();
     }
 
@@ -24,7 +24,7 @@ export const useCurrentUserPresenceLiveAsync = (): (() => Promise<string>) => {
     const query = `LIVE ${currentUserPresenceQuery}`;
     const response = await dbClient.query<[string]>(query);
 
-    if (!response?.[0]?.result) {
+    if (!response?.[0]?.result?.[0]) {
       throw new Error();
     }
 

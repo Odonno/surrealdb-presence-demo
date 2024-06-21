@@ -1,4 +1,7 @@
-DEFINE TABLE join_room SCHEMALESS;
+DEFINE TABLE join_room SCHEMALESS
+    PERMISSIONS 
+        FOR create WHERE $auth
+        FOR select, update, delete NONE;
 
 DEFINE FIELD room_id ON join_room TYPE record<room>;
 

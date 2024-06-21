@@ -1,4 +1,7 @@
-DEFINE TABLE leave_room SCHEMALESS;
+DEFINE TABLE leave_room SCHEMALESS
+    PERMISSIONS 
+        FOR create WHERE $auth
+        FOR select, update, delete NONE;
 
 DEFINE FIELD room_id ON leave_room TYPE record<room>;
 

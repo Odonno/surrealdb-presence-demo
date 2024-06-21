@@ -1,7 +1,7 @@
 DEFINE TABLE presence SCHEMAFULL
     PERMISSIONS
         FOR select FULL
-        FOR create, update WHERE user = $auth.id
+        FOR create, update WHERE user == $auth.id
         FOR delete NONE;
 
 DEFINE FIELD room ON presence TYPE record<room>;

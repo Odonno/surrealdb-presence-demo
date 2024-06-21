@@ -6,4 +6,6 @@ DEFINE TABLE last_presence AS
     FROM presence
     WHERE status = "joined"
 	GROUP BY user, room
-;
+PERMISSIONS 
+    FOR select WHERE user == $auth.id
+    FOR create, update, delete NONE;
