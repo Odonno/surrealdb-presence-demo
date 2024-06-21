@@ -53,8 +53,8 @@ surrealdb-migrations apply
 3. Install dependencies and run the web app
 
 ```bash
-npm install
-npm run dev
+bun install
+bun start
 ```
 
 4. Launch your web browser on the generated url (eg. http://localhost:5173/) and play with the app (create new accounts, join rooms, leave rooms)
