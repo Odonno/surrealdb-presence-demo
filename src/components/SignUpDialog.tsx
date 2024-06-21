@@ -162,7 +162,7 @@ const SignUpDialog = () => {
       <DialogContent className="sm:max-w-[460px]">
         <DialogHeader>
           <DialogTitle>Sign up</DialogTitle>
-          <DialogDescription>Registers a new acount.</DialogDescription>
+          <DialogDescription>Registers a new account.</DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
