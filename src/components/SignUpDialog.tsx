@@ -16,7 +16,7 @@ import { useAtomValue } from "jotai";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DB, NS, USER_SCOPE } from "@/constants/db";
 import { ACCESS_TOKEN } from "@/constants/storage";
-import { Loader2 } from "lucide-react";
+import { Loader2, UserPlus } from "lucide-react";
 import { queryKeys } from "@/lib/queryKeys";
 import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 
@@ -156,7 +156,10 @@ const SignUpDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="default">Sign up</Button>
+        <Button variant="default">
+          <UserPlus className="mr-2 h-4 w-4" />
+          Sign up
+        </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[460px]">
