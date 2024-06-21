@@ -11,7 +11,7 @@ const surrealClient = new Surreal();
 
 const App = () => {
   const connect: ConnectFn = async ({ client, endpoint, params }) => {
-    await client.connect(`${endpoint}/rpc`, params);
+    await client.connect(endpoint, params);
 
     const token = localStorage.getItem(ACCESS_TOKEN);
 
