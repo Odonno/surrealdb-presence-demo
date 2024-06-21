@@ -11,28 +11,45 @@ const Rooms = () => {
     queryFn: getRoomsAsync,
   });
 
-  const isInOneRoom = (rooms || []).some((room) => room.is_in_room);
+  const yourRooms = (rooms || []).filter((room) => room.is_in_room);
+  const otherRooms = (rooms || []).filter((room) => !room.is_in_room);
 
   return (
-    <>
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-        Rooms
-      </h3>
+    <div className="flex flex-col gap-4">
+      {yourRooms.length > 0 ? (
+        <section>
+          <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+            Your rooms
+          </h3>
 
-      <ul className="mt-6 flex flex-row gap-2">
-        {rooms?.map((room) => {
-          if (isInOneRoom && !room.is_in_room) {
-            return null;
-          }
+          <ul className="mt-6 flex flex-row gap-2">
+            {yourRooms?.map((room) => {
+              return (
+                <li key={room.id}>
+                  <Room room={room} />
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ) : null}
 
-          return (
-            <li key={room.id}>
-              <Room room={room} />
-            </li>
-          );
-        })}
-      </ul>
-    </>
+      <section>
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+          All rooms
+        </h3>
+
+        <ul className="mt-6 flex flex-row gap-2">
+          {otherRooms?.map((room) => {
+            return (
+              <li key={room.id}>
+                <Room room={room} />
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    </div>
   );
 };
 

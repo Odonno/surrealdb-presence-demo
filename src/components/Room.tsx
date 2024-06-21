@@ -127,59 +127,57 @@ const Room = (props: RoomProps) => {
   };
 
   return (
-    <div>
-      <Card>
-        <CardHeader>
-          <CardTitle>{room.name}</CardTitle>
-        </CardHeader>
+    <Card className="min-w-[250px]">
+      <CardHeader>
+        <CardTitle>{room.name}</CardTitle>
+      </CardHeader>
 
-        <CardContent>
-          {room.is_in_room ? (
-            <RoomUsers room={room} />
-          ) : room.number_of_active_users ? (
-            <p className="text-sm font-medium leading-none">
-              There are {room.number_of_active_users} user(s) in this room...
-            </p>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              There are no user in this room...
-            </p>
-          )}
-        </CardContent>
+      <CardContent>
+        {room.is_in_room ? (
+          <RoomUsers room={room} />
+        ) : room.number_of_active_users ? (
+          <p className="text-sm font-medium leading-none">
+            There are {room.number_of_active_users} user(s) in this room...
+          </p>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            There are no user in this room...
+          </p>
+        )}
+      </CardContent>
 
-        <CardFooter>
-          {room.is_in_room ? (
-            <Button
-              type="button"
-              variant="default"
-              onClick={handleLeaveRoom}
-              disabled={leaveRoom.isPending}
-            >
-              {leaveRoom.isPending ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <DoorOpen className="mr-2 h-4 w-4" />
-              )}
-              Leave
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              variant="default"
-              onClick={handleJoinRoom}
-              disabled={joinRoom.isPending}
-            >
-              {joinRoom.isPending ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <DoorClosed className="mr-2 h-4 w-4" />
-              )}
-              Join this room
-            </Button>
-          )}
-        </CardFooter>
-      </Card>
-    </div>
+      <CardFooter>
+        {room.is_in_room ? (
+          <Button
+            type="button"
+            variant="default"
+            onClick={handleLeaveRoom}
+            disabled={leaveRoom.isPending}
+          >
+            {leaveRoom.isPending ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <DoorOpen className="mr-2 h-4 w-4" />
+            )}
+            Leave
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            variant="default"
+            onClick={handleJoinRoom}
+            disabled={joinRoom.isPending}
+          >
+            {joinRoom.isPending ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <DoorClosed className="mr-2 h-4 w-4" />
+            )}
+            Join this room
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
   );
 };
 
