@@ -1,11 +1,10 @@
 import type { Room, RoomUser } from "@/lib/models";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import Presence from "./Presence";
 import { useEffectOnce } from "usehooks-ts";
 import { queryKeys } from "@/lib/queryKeys";
 import { useLiveQuery } from "@/hooks/useLiveQuery";
 import { useRoomUsersAsync, useRoomUsersLiveAsync } from "@/api/roomUsers";
+import UserHoverCard from "./UserHoverCard";
 
 export type RoomUserProps = {
   room: Room;
@@ -69,18 +68,8 @@ const RoomUsers = (props: RoomUserProps) => {
   return (
     <ul className="flex flex-wrap gap-3 max-w-[300px]">
       {(users || []).map((u) => (
-        <li key={u.user_id} className="relative">
-          <Avatar>
-            <AvatarImage src={u.avatar} alt={`${u.username}`} />
-            <AvatarFallback>{u.avatarFallback}</AvatarFallback>
-          </Avatar>
-
-          <Presence
-            className="absolute top-0 right-0"
-            lastPresenceDate={
-              u.status === "joined" ? new Date(u.updated_at) : undefined
-            }
-          />
+        <li key={u.user_id}>
+          <UserHoverCard user={u} />
         </li>
       ))}
     </ul>

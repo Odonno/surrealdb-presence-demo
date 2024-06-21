@@ -4,6 +4,7 @@ SELECT
     user.avatar AS avatar,
     string::uppercase(string::slice(user.username, 0, 2)) AS avatarFallback,
     status,
-    updated_at
+    updated_at,
+    user.registered_at AS registered_at
 FROM presence
 WHERE room = $room_id;
