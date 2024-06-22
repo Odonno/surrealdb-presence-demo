@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useEffectOnce, useInterval } from "usehooks-ts";
+import { useInterval } from "usehooks-ts";
 import { SECOND } from "@/constants/time";
 import RoomUsers from "./RoomUsers";
 import { usePageVisibility } from "react-page-visibility";
@@ -20,6 +20,7 @@ import { queryKeys } from "@/lib/queryKeys";
 import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 import RoomMessages from "./RoomMessages";
 import SendMessageForm from "./SendMessageForm";
+import { useEffect } from "react";
 
 export type RoomProps = {
   room: RoomType;
@@ -56,11 +57,12 @@ const Room = (props: RoomProps) => {
     canSignalPresence ? SIGNAL_PRESENCE_INTERVAL : null
   );
 
-  useEffectOnce(() => {
+  useEffect(() => {
     if (canSignalPresence) {
       signalPresence.mutate();
     }
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPageVisible]);
 
   const joinRoom = useMutation({
     mutationFn: async () => {
