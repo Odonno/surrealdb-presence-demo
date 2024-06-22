@@ -4,4 +4,7 @@ DEFINE TABLE room SCHEMAFULL
         FOR create, update, delete NONE;
 
 DEFINE FIELD name ON room TYPE string;
+DEFINE FIELD owner ON room TYPE option<record<user>>;
 DEFINE FIELD created_at ON room TYPE datetime DEFAULT time::now();
+
+DEFINE INDEX unique_name ON room COLUMNS name UNIQUE;

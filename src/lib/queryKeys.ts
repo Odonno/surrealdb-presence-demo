@@ -23,6 +23,9 @@ export const roomsKeys = createQueryKeys("rooms", {
   list: {
     queryKey: null,
   },
+  canCreate: {
+    queryKey: null,
+  },
   detail: (roomId: string) => ({
     queryKey: [roomId],
     queryFn: null,

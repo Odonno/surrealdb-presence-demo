@@ -150,7 +150,7 @@ const Room = (props: RoomProps) => {
         {room.is_in_room ? (
           <Button
             type="button"
-            variant="default"
+            variant="outline"
             onClick={handleLeaveRoom}
             disabled={leaveRoom.isPending}
           >

@@ -1,0 +1,1 @@
+RETURN count(SELECT * FROM room WHERE owner == $auth.id) <= 0;
