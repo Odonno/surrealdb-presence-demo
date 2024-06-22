@@ -146,13 +146,14 @@ const Room = (props: RoomProps) => {
         )}
       </CardContent>
 
-      <CardFooter>
+      <CardFooter className="p-0">
         {room.is_in_room ? (
           <>
             {room.can_leave ? (
               <Button
                 type="button"
                 variant="outline"
+                className="w-full rounded-t-none"
                 onClick={handleLeaveRoom}
                 disabled={leaveRoom.isPending}
               >
@@ -164,7 +165,12 @@ const Room = (props: RoomProps) => {
                 Leave
               </Button>
             ) : (
-              <Button type="button" variant="ghost" disabled>
+              <Button
+                type="button"
+                variant="ghost"
+                disabled
+                className="w-full rounded-t-none"
+              >
                 This a cosy room.
               </Button>
             )}
@@ -173,6 +179,7 @@ const Room = (props: RoomProps) => {
           <Button
             type="button"
             variant="default"
+            className="w-full rounded-t-none"
             onClick={handleJoinRoom}
             disabled={joinRoom.isPending}
           >
