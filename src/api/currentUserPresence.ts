@@ -1,10 +1,12 @@
 import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
+import { queryKeys } from "@/lib/queryKeys";
 import currentUserPresenceQuery from "@/queries/currentUserPresence.surql?raw";
+import { useQuery } from "@tanstack/react-query";
 
-export const useCurrentUserPresenceAsync = (): (() => Promise<Date>) => {
+export const useCurrentUserPresence = () => {
   const dbClient = useSurrealDbClient();
 
-  const fn = async () => {
+  const getCurrentUserPresenceAsync = async () => {
     const response = await dbClient.query<[string]>(currentUserPresenceQuery);
 
     if (!response?.[0]?.result?.[0]) {
@@ -14,13 +16,16 @@ export const useCurrentUserPresenceAsync = (): (() => Promise<Date>) => {
     return new Date(response[0].result);
   };
 
-  return fn;
+  return useQuery({
+    ...queryKeys.users.current._ctx.presence,
+    queryFn: getCurrentUserPresenceAsync,
+  });
 };
 
-export const useCurrentUserPresenceLiveAsync = (): (() => Promise<string>) => {
+export const useCurrentUserPresenceLive = (enabled: boolean) => {
   const dbClient = useSurrealDbClient();
 
-  const fn = async () => {
+  const getCurrentUserPresenceLiveAsync = async () => {
     const query = `LIVE ${currentUserPresenceQuery}`;
     const response = await dbClient.query<[string]>(query);
 
@@ -31,5 +36,9 @@ export const useCurrentUserPresenceLiveAsync = (): (() => Promise<string>) => {
     return response[0].result;
   };
 
-  return fn;
+  return useQuery({
+    ...queryKeys.users.current._ctx.presence._ctx.live,
+    queryFn: getCurrentUserPresenceLiveAsync,
+    enabled,
+  });
 };

@@ -1,12 +1,14 @@
 import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 import type { RoomUser } from "@/lib/models";
+import { queryKeys } from "@/lib/queryKeys";
 import roomUsersQuery from "@/queries/roomUsers.surql?raw";
+import { useQuery } from "@tanstack/react-query";
 import { sortBy } from "remeda";
 
-export const useRoomUsersAsync = (roomId: string) => {
+export const useRoomUsers = (roomId: string, enabled: boolean) => {
   const dbClient = useSurrealDbClient();
 
-  const fn = async () => {
+  const getRoomUsersAsync = async () => {
     const response = await dbClient.query<[RoomUser[]]>(roomUsersQuery, {
       room_id: roomId,
     });
@@ -19,15 +21,17 @@ export const useRoomUsersAsync = (roomId: string) => {
     return sortBy(users, [(u) => u.updated_at, "desc"]);
   };
 
-  return fn;
+  return useQuery({
+    ...queryKeys.rooms.detail(roomId)._ctx.users,
+    queryFn: getRoomUsersAsync,
+    enabled,
+  });
 };
 
-export const useRoomUsersLiveAsync = (
-  roomId: string
-): (() => Promise<string>) => {
+export const useRoomUsersLive = (roomId: string, enabled: boolean) => {
   const dbClient = useSurrealDbClient();
 
-  const fn = async () => {
+  const getRoomUsersLiveAsync = async () => {
     // 💡 cannot use params with LIVE queries at the moment
     // see https://github.com/surrealdb/surrealdb/issues/2641
     const query = `LIVE ${roomUsersQuery}`.replace("$room_id", roomId);
@@ -40,5 +44,9 @@ export const useRoomUsersLiveAsync = (
     return response[0].result;
   };
 
-  return fn;
+  return useQuery({
+    ...queryKeys.rooms.detail(roomId)._ctx.users._ctx.live,
+    queryFn: getRoomUsersLiveAsync,
+    enabled,
+  });
 };

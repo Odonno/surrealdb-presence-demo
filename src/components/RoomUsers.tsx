@@ -1,9 +1,9 @@
 import type { Room, RoomUser } from "@/lib/models";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffectOnce } from "usehooks-ts";
 import { queryKeys } from "@/lib/queryKeys";
 import { useLiveQuery } from "@/hooks/useLiveQuery";
-import { useRoomUsersAsync, useRoomUsersLiveAsync } from "@/api/roomUsers";
+import { useRoomUsers, useRoomUsersLive } from "@/api/roomUsers";
 import UserHoverCard from "./UserHoverCard";
 
 export type RoomUserProps = {
@@ -15,20 +15,11 @@ const RoomUsers = (props: RoomUserProps) => {
 
   const queryClient = useQueryClient();
 
-  const getRoomUsersAsync = useRoomUsersAsync(room.id);
-  const getRoomUsersLiveAsync = useRoomUsersLiveAsync(room.id);
-
-  const { data: users, isSuccess } = useQuery({
-    ...queryKeys.rooms.detail(room.id)._ctx.users,
-    queryFn: getRoomUsersAsync,
-    enabled: room.is_in_room,
-  });
-
-  const { data: liveQueryUuid } = useQuery({
-    ...queryKeys.rooms.detail(room.id)._ctx.users._ctx.live,
-    queryFn: getRoomUsersLiveAsync,
-    enabled: room.is_in_room && isSuccess,
-  });
+  const { data: users, isSuccess } = useRoomUsers(room.id, room.is_in_room);
+  const { data: liveQueryUuid } = useRoomUsersLive(
+    room.id,
+    room.is_in_room && isSuccess
+  );
 
   useLiveQuery({
     queryUuid: liveQueryUuid ?? "",

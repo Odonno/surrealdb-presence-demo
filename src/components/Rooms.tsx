@@ -1,27 +1,17 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import Room from "./Room";
-import { queryKeys } from "@/lib/queryKeys";
-import { useRoomsAsync } from "@/api/rooms";
+import { useRooms } from "@/api/rooms";
 import { Button } from "./ui/button";
 import { Loader2, PlusIcon } from "lucide-react";
 import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 import createRoomQuery from "@/mutations/createRoom.surql?raw";
-import { useCanCreateRoomAsync } from "@/api/canCreateRoom";
+import { useCanCreateRoom } from "@/api/canCreateRoom";
 
 const Rooms = () => {
   const dbClient = useSurrealDbClient();
-  const getRoomsAsync = useRoomsAsync();
-  const canCreateRoomAsync = useCanCreateRoomAsync();
 
-  const { data: rooms } = useQuery({
-    ...queryKeys.rooms.list,
-    queryFn: getRoomsAsync,
-  });
-
-  const { data: canCreateRoom } = useQuery({
-    ...queryKeys.rooms.canCreate,
-    queryFn: canCreateRoomAsync,
-  });
+  const { data: rooms } = useRooms();
+  const { data: canCreateRoom } = useCanCreateRoom();
 
   const yourRooms = (rooms || []).filter((room) => room.is_in_room);
   const otherRooms = (rooms || []).filter((room) => !room.is_in_room);

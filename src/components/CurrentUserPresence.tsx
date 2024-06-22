@@ -1,29 +1,18 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import Presence from "./Presence";
 import { useEffectOnce } from "usehooks-ts";
 import { queryKeys } from "@/lib/queryKeys";
 import { useLiveQuery } from "@/hooks/useLiveQuery";
 import {
-  useCurrentUserPresenceAsync,
-  useCurrentUserPresenceLiveAsync,
+  useCurrentUserPresence,
+  useCurrentUserPresenceLive,
 } from "@/api/currentUserPresence";
 
 const CurrentUserPresence = () => {
   const queryClient = useQueryClient();
 
-  const getCurrentUserPresenceAsync = useCurrentUserPresenceAsync();
-  const getCurrentUserPresenceLiveAsync = useCurrentUserPresenceLiveAsync();
-
-  const { data: lastPresenceDate, isSuccess } = useQuery({
-    ...queryKeys.users.current._ctx.presence,
-    queryFn: getCurrentUserPresenceAsync,
-  });
-
-  const { data: liveQueryUuid } = useQuery({
-    ...queryKeys.users.current._ctx.presence._ctx.live,
-    queryFn: getCurrentUserPresenceLiveAsync,
-    enabled: isSuccess,
-  });
+  const { data: lastPresenceDate, isSuccess } = useCurrentUserPresence();
+  const { data: liveQueryUuid } = useCurrentUserPresenceLive(isSuccess);
 
   useLiveQuery({
     queryUuid: liveQueryUuid ?? "",
