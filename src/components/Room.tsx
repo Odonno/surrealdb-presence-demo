@@ -19,6 +19,7 @@ import { usePageVisibility } from "react-page-visibility";
 import { queryKeys } from "@/lib/queryKeys";
 import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 import RoomMessages from "./RoomMessages";
+import SendMessageForm from "./SendMessageForm";
 
 export type RoomProps = {
   room: RoomType;
@@ -128,7 +129,7 @@ const Room = (props: RoomProps) => {
   };
 
   return (
-    <Card className="min-w-[250px]">
+    <Card className="min-w-[350px]">
       <CardHeader>
         <CardTitle>{room.name}</CardTitle>
       </CardHeader>
@@ -137,6 +138,7 @@ const Room = (props: RoomProps) => {
         {room.is_in_room ? (
           <>
             <RoomUsers room={room} />
+            <SendMessageForm room={room} />
             <RoomMessages room={room} />
           </>
         ) : room.number_of_active_users ? (

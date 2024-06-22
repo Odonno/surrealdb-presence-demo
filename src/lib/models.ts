@@ -29,7 +29,7 @@ export type RoomUser = {
   registered_at: string;
 };
 
-export type RoomMessageType = "ENTER_ROOM" | "LEAVE_ROOM";
+export type RoomMessageType = "ENTER_ROOM" | "LEAVE_ROOM" | "TEXT_MESSAGE";
 
 export type RoomMessage = {
   id: Id;

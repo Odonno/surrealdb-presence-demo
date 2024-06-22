@@ -1,7 +1,12 @@
 import { useCurrentUser } from "@/api/currentUser";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { RoomMessage as RoomMessageModel } from "@/lib/models";
-import { CalendarIcon, DoorClosedIcon, DoorOpenIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  DoorClosedIcon,
+  DoorOpenIcon,
+  SendIcon,
+} from "lucide-react";
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   dateStyle: "short",
@@ -36,6 +41,30 @@ const RoomMessage = ({ message }: RoomMessageProps) => {
         )}
         <AlertDescription>
           <div>{content}</div>
+
+          <div className="flex items-center pt-1">
+            <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />
+            <span className="text-xs text-muted-foreground">{sentAt}</span>
+          </div>
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  if (message.type === "TEXT_MESSAGE") {
+    const isSelf = currentUser?.id === message.author.id;
+    const username = isSelf ? "You" : `@${message.author.username}`;
+
+    const title = `${username} sent a message`;
+
+    return (
+      <Alert>
+        <SendIcon className="h-4 w-4" />
+
+        <AlertTitle>{title}</AlertTitle>
+
+        <AlertDescription>
+          <div>{message.content}</div>
 
           <div className="flex items-center pt-1">
             <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />

@@ -7,5 +7,5 @@ DEFINE TABLE message SCHEMAFULL
 DEFINE FIELD room ON message TYPE record<room>;
 DEFINE FIELD author ON message TYPE option<record<user>>;
 DEFINE FIELD content ON message TYPE option<string>;
-DEFINE FIELD type ON message TYPE string ASSERT $value IN ["ENTER_ROOM", "LEAVE_ROOM"];
+DEFINE FIELD type ON message TYPE string ASSERT $value IN ["ENTER_ROOM", "LEAVE_ROOM", "TEXT_MESSAGE"];
 DEFINE FIELD created_at ON message TYPE datetime DEFAULT time::now();

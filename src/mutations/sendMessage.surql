@@ -1,0 +1,1 @@
+CREATE send_message SET room_id = $room_id, content = $content;
