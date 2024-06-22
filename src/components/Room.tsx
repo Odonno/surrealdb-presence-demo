@@ -18,6 +18,7 @@ import RoomUsers from "./RoomUsers";
 import { usePageVisibility } from "react-page-visibility";
 import { queryKeys } from "@/lib/queryKeys";
 import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
+import RoomMessages from "./RoomMessages";
 
 export type RoomProps = {
   room: RoomType;
@@ -134,7 +135,10 @@ const Room = (props: RoomProps) => {
 
       <CardContent>
         {room.is_in_room ? (
-          <RoomUsers room={room} />
+          <>
+            <RoomUsers room={room} />
+            <RoomMessages room={room} />
+          </>
         ) : room.number_of_active_users ? (
           <p className="text-sm font-medium leading-none">
             There are {room.number_of_active_users} user(s) in this room...

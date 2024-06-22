@@ -46,7 +46,7 @@ const Header = (props: HeaderProps) => {
               <Avatar>
                 <AvatarImage
                   src={currentUser.avatar}
-                  alt={`${currentUser.username}`}
+                  alt={currentUser.username}
                 />
                 <AvatarFallback>{currentUser.avatarFallback}</AvatarFallback>
               </Avatar>

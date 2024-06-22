@@ -66,13 +66,15 @@ const RoomUsers = (props: RoomUserProps) => {
   });
 
   return (
-    <ul className="flex flex-wrap gap-3 max-w-[300px]">
-      {(users || []).map((u) => (
-        <li key={u.user_id}>
-          <UserHoverCard user={u} />
-        </li>
-      ))}
-    </ul>
+    <section>
+      <ul className="flex flex-wrap gap-3 max-w-[300px]">
+        {(users || []).map((u) => (
+          <li key={u.user_id}>
+            <UserHoverCard user={u} />
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 };
 

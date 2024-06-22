@@ -22,6 +22,7 @@ DEFINE EVENT create_room ON TABLE create_room WHEN $event == "CREATE" THEN {
         LET $new_rooms = CREATE room SET name = $room_name, owner = $auth.id;
         LET $own_room = $new_rooms[0];
         CREATE presence SET room = $own_room.id, user = $auth.id;
+        CREATE message SET room = $own_room.id, author = $auth.id, type = "ENTER_ROOM";
     }
     END;
 };

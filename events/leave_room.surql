@@ -21,4 +21,6 @@ DEFINE EVENT leave_room ON TABLE leave_room WHEN $event == "CREATE" THEN {
         THROW "You are not in this room";
     }
     END;
+
+    CREATE message SET room = $after.room_id, author = $auth.id, type = "LEAVE_ROOM";
 };

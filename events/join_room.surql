@@ -21,4 +21,6 @@ DEFINE EVENT join_room ON TABLE join_room WHEN $event == "CREATE" THEN {
         CREATE presence SET room = $after.room_id, user = $auth.id;
     }
     END;
+
+    CREATE message SET room = $after.room_id, author = $auth.id, type = "ENTER_ROOM";
 };

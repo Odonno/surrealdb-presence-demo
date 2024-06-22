@@ -1,20 +1,11 @@
 import Rooms from "@/components/Rooms";
 import Header from "@/components/Header";
-import { useQuery } from "@tanstack/react-query";
-import { queryKeys } from "@/lib/queryKeys";
 import { useSurrealDb } from "@/contexts/surrealdb-provider";
-import { useCurrentUserAsync } from "@/api/currentUser";
+import { useCurrentUser } from "@/api/currentUser";
 
 const HomePage = () => {
   const { isLoading: isConnecting, isError, error, isSuccess } = useSurrealDb();
-  const getCurrentUserAsync = useCurrentUserAsync();
-
-  const { data: currentUser, isLoading } = useQuery({
-    ...queryKeys.users.current,
-    queryFn: getCurrentUserAsync,
-    enabled: isSuccess,
-    retry: false,
-  });
+  const { data: currentUser, isLoading } = useCurrentUser(isSuccess);
 
   if (isError) {
     return (
