@@ -171,7 +171,7 @@ const Room = (props: RoomProps) => {
                 disabled
                 className="w-full rounded-t-none"
               >
-                This a cosy room.
+                This is a cosy room.
               </Button>
             )}
           </>
