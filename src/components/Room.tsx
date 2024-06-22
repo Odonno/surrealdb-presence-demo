@@ -148,19 +148,27 @@ const Room = (props: RoomProps) => {
 
       <CardFooter>
         {room.is_in_room ? (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleLeaveRoom}
-            disabled={leaveRoom.isPending}
-          >
-            {leaveRoom.isPending ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <>
+            {room.can_leave ? (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleLeaveRoom}
+                disabled={leaveRoom.isPending}
+              >
+                {leaveRoom.isPending ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <DoorOpen className="mr-2 h-4 w-4" />
+                )}
+                Leave
+              </Button>
             ) : (
-              <DoorOpen className="mr-2 h-4 w-4" />
+              <Button type="button" variant="ghost" disabled>
+                This a cosy room.
+              </Button>
             )}
-            Leave
-          </Button>
+          </>
         ) : (
           <Button
             type="button"

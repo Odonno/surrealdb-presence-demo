@@ -16,6 +16,7 @@ SELECT
         AND status = "joined"
         AND time::now() - updated_at < 5m
         GROUP ALL
-    ) AS number_of_active_users
+    ) AS number_of_active_users,
+    owner.id != $auth.id AS can_leave
 FROM room
 ORDER BY created_at;

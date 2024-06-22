@@ -10,6 +10,7 @@ export type Room = {
   created_at: string;
   is_in_room: boolean;
   number_of_active_users: number;
+  can_leave: boolean;
 };
 
 export type PresenceStatus = "joined" | "left";
