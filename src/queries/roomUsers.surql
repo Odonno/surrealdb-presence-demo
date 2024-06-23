@@ -11,5 +11,6 @@ SELECT VALUE (
         )[0] AS last_presence,
         registered_at
     FROM $parent.users
+    ORDER BY last_presence DESC
 )
 FROM ONLY $room_id;

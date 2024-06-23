@@ -30,6 +30,14 @@ export const roomsKeys = createQueryKeys("rooms", {
     queryKey: [roomId],
     queryFn: null,
     contextQueries: {
+      messages: {
+        queryKey: null,
+        contextQueries: {
+          live: {
+            queryKey: null,
+          },
+        },
+      },
       users: {
         queryKey: null,
         contextQueries: {

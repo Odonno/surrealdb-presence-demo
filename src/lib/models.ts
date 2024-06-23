@@ -14,7 +14,6 @@ export type Room = {
   is_in_room: boolean;
   number_of_active_users: number;
   can_leave: boolean;
-  messages: RoomMessage[];
 };
 
 export type PresenceStatus = "joined" | "left";

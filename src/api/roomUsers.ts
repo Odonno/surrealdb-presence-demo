@@ -3,7 +3,6 @@ import type { RoomUser } from "@/lib/models";
 import { queryKeys } from "@/lib/queryKeys";
 import roomUsersQuery from "@/queries/roomUsers.surql?raw";
 import { useQuery } from "@tanstack/react-query";
-import { sortBy } from "remeda";
 
 export const useRoomUsers = (roomId: string, enabled: boolean) => {
   const dbClient = useSurrealDbClient();
@@ -17,8 +16,7 @@ export const useRoomUsers = (roomId: string, enabled: boolean) => {
       throw new Error();
     }
 
-    const users = response[0].result;
-    return sortBy(users, [(u) => u.updated_at, "desc"]);
+    return response[0].result;
   };
 
   return useQuery({
