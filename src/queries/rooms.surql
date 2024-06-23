@@ -8,11 +8,11 @@ SELECT
     array::len(
         SELECT count()
         FROM $parent.users
-        WHERE time::now() - (
+        WHERE time::now() - ((
             SELECT VALUE at
             FROM last_presence
             WHERE user == $parent.id
-        )[0] < 5m
+        )[0] ?? time::from::secs(0)) < 5m
     ) AS number_of_active_users,
     owner.id != $auth.id AS can_leave
 FROM room
