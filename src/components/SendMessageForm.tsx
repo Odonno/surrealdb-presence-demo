@@ -34,6 +34,9 @@ const SendMessageForm = ({ room }: SendMessageFormProps) => {
 
       // TODO
     },
+    onSettled: () => {
+      setContent("");
+    },
   });
 
   const handleSend = async () => {
