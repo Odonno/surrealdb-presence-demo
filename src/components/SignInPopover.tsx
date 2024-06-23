@@ -68,6 +68,7 @@ const SignInPopover = () => {
   const dbClient = useSurrealDbClient();
 
   const signin = useMutation({
+    mutationKey: ["signin"],
     mutationFn: async (props: SigninMutationProps) => {
       const token = await dbClient.signin({
         NS: NS,

@@ -15,6 +15,7 @@ const SignalPresence = () => {
   const dbClient = useSurrealDbClient();
 
   const signalPresence = useMutation({
+    mutationKey: ["signalPresence"],
     mutationFn: async () => {
       const response = await dbClient.query(signalPresenceQuery);
 

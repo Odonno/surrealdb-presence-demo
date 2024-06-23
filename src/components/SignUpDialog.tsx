@@ -126,6 +126,7 @@ const SignUpDialog = () => {
   const dbClient = useSurrealDbClient();
 
   const signup = useMutation({
+    mutationKey: ["signup"],
     mutationFn: async (props: SignupMutationProps) => {
       const token = await dbClient.signup({
         NS,

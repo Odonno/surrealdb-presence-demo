@@ -22,6 +22,7 @@ const Header = (props: HeaderProps) => {
   const dbClient = useSurrealDbClient();
 
   const signout = useMutation({
+    mutationKey: ["signout"],
     mutationFn: async () => {
       localStorage.removeItem(ACCESS_TOKEN);
       await dbClient.invalidate();

@@ -24,6 +24,7 @@ const SendMessageForm = ({ room }: SendMessageFormProps) => {
   const dbClient = useSurrealDbClient();
 
   const send = useMutation({
+    mutationKey: ["sendMessage", room.id],
     mutationFn: async (props: SendMessageMutationProps) => {
       const response = await dbClient.query(sendMessageQuery, props);
 

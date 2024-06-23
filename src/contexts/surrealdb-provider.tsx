@@ -53,6 +53,7 @@ export function SurrealDbProvider({
   const surrealInstance = useMemo(() => client ?? new Surreal(), [client]);
 
   const connectDb = useMutation({
+    mutationKey: ["connect", endpoint, params],
     mutationFn: async () => {
       if (connectFn) {
         await connectFn({ client: surrealInstance, endpoint, params });

@@ -17,6 +17,7 @@ const Rooms = () => {
   const otherRooms = (rooms || []).filter((room) => !room.is_in_room);
 
   const createRoom = useMutation({
+    mutationKey: ["createRoom"],
     mutationFn: async () => {
       const response = await dbClient.query(createRoomQuery);
 
