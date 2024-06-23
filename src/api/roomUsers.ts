@@ -31,8 +31,11 @@ export const useRoomUsersLive = (roomId: string, enabled: boolean) => {
 
   const getRoomUsersLiveAsync = async () => {
     // 💡 cannot use params with LIVE queries at the moment
+    // 💡 cannot use ORDER BY statement in LQ
     // see https://github.com/surrealdb/surrealdb/issues/2641
-    const query = `LIVE ${roomUsersQuery}`.replace("$room_id", roomId);
+    const query = `LIVE ${roomUsersQuery}`
+      .replace("$room_id", roomId)
+      .replace(/ORDER BY (.+)([^;|\n])/g, "");
     const response = await dbClient.query<[string]>(query);
 
     if (!response?.[0]?.result) {

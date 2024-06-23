@@ -1,16 +1,10 @@
-SELECT VALUE (
-    SELECT 
-        id AS user_id,
-        username,
-        avatar,
-        string::uppercase(string::slice(username, 0, 2)) AS avatarFallback,
-        (
-            SELECT VALUE at
-            FROM last_presence
-            WHERE user == $auth.id
-        )[0] AS last_presence,
-        registered_at
-    FROM $parent.users
-    ORDER BY last_presence DESC
-)
-FROM ONLY $room_id;
+SELECT
+    at AS last_presence,
+    user.id AS user_id,
+    user.username AS username,
+    user.avatar AS avatar,
+    string::uppercase(string::slice(user.username, 0, 2)) AS avatarFallback,
+    user.registered_at AS registered_at
+FROM last_presence
+WHERE user IN $room_id.users
+ORDER BY last_presence DESC;

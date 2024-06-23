@@ -5,5 +5,5 @@ DEFINE TABLE last_presence AS
     FROM presence
 	GROUP BY user
 PERMISSIONS 
-    FOR select WHERE user == $auth.id
+    FOR select FULL
     FOR create, update, delete NONE;

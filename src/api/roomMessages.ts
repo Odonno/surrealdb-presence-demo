@@ -38,7 +38,6 @@ export const useRoomMessagesLive = (roomId: string, enabled: boolean) => {
       .replace("$room_id", roomId)
       .replace(/ORDER BY (.+)([^;|\n])/g, "")
       .replace(/LIMIT ([^;|\n])/g, "");
-    console.log(query);
     const response = await dbClient.query<[string]>(query);
 
     if (!response?.[0]?.result) {
