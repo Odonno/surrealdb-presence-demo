@@ -2,6 +2,7 @@ import Rooms from "@/components/Rooms";
 import Header from "@/components/Header";
 import { useSurrealDb } from "@/contexts/surrealdb-provider";
 import { useCurrentUser } from "@/api/currentUser";
+import SignalPresence from "@/components/SignalPresence";
 
 const HomePage = () => {
   const { isLoading: isConnecting, isError, error, isSuccess } = useSurrealDb();
@@ -36,6 +37,8 @@ const HomePage = () => {
           </p>
         )}
       </section>
+
+      <SignalPresence />
     </>
   );
 };

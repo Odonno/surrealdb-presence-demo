@@ -69,10 +69,12 @@ This project is using the following architecture:
 - `/events` - list of SurrealDB events
 - `/migrations` - list of db migrations that will be automatically applied
 - `/src`
+  - `/api` - TanStack query hooks
   - `/components`
-  - `/pages`
-  - `/contexts` - Theme and SurrealDB providers
-  - `/queries` - surql query files to query the database, using SurrealDB tables
-  - `/mutations` - surql query files to create or update data, using SurrealDB events
-  - `/lib` - functions and app models
   - `/constants`
+  - `/contexts` - Theme and SurrealDB providers
+  - `/hooks` - custom React hooks
+  - `/lib` - functions and app models
+  - `/mutations` - surql query files to create or update data, using SurrealDB events
+  - `/pages`
+  - `/queries` - surql query files to query the database, using SurrealDB tables

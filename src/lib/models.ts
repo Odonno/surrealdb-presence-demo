@@ -24,8 +24,7 @@ export type RoomUser = {
   username: string;
   avatar?: string;
   avatarFallback: string;
-  status: PresenceStatus;
-  updated_at: string;
+  last_presence?: string;
   registered_at: string;
 };
 

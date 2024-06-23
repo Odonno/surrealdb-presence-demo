@@ -33,7 +33,7 @@ const UserHoverCard = ({ user }: UserHoverCardProps) => {
           <Presence
             className="absolute top-0 right-0"
             lastPresenceDate={
-              user.status === "joined" ? new Date(user.updated_at) : undefined
+              user.last_presence ? new Date(user.last_presence) : undefined
             }
           />
         </div>

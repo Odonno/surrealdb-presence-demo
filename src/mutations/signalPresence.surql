@@ -1,1 +1,1 @@
-CREATE signal_presence SET room_id = $room_id;
+CREATE signal_presence;

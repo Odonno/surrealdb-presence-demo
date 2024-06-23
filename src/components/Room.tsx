@@ -3,7 +3,6 @@ import { Button } from "./ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import joinRoomQuery from "@/mutations/joinRoom.surql?raw";
 import leaveRoomQuery from "@/mutations/leaveRoom.surql?raw";
-import signalPresenceQuery from "@/mutations/signalPresence.surql?raw";
 import { DoorClosed, DoorOpen, Loader2 } from "lucide-react";
 import {
   Card,
@@ -12,57 +11,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useInterval } from "usehooks-ts";
-import { SECOND } from "@/constants/time";
 import RoomUsers from "./RoomUsers";
-import { usePageVisibility } from "react-page-visibility";
 import { queryKeys } from "@/lib/queryKeys";
 import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 import RoomMessages from "./RoomMessages";
 import SendMessageForm from "./SendMessageForm";
-import { useEffect } from "react";
 
 export type RoomProps = {
   room: RoomType;
 };
 
-const SIGNAL_PRESENCE_INTERVAL = 10 * SECOND;
-
 const Room = (props: RoomProps) => {
   const { room } = props;
 
-  const isPageVisible = usePageVisibility();
-
-  const canSignalPresence = room.is_in_room && isPageVisible;
-
   const queryClient = useQueryClient();
   const dbClient = useSurrealDbClient();
-
-  const signalPresence = useMutation({
-    mutationFn: async () => {
-      const response = await dbClient.query(signalPresenceQuery, {
-        room_id: room.id,
-      });
-
-      if (!response?.[0] || response[0].status !== "OK") {
-        throw new Error();
-      }
-    },
-  });
-
-  useInterval(
-    () => {
-      signalPresence.mutate();
-    },
-    canSignalPresence ? SIGNAL_PRESENCE_INTERVAL : null
-  );
-
-  useEffect(() => {
-    if (canSignalPresence) {
-      signalPresence.mutate();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPageVisible]);
 
   const joinRoom = useMutation({
     mutationFn: async () => {

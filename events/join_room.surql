@@ -6,21 +6,18 @@ DEFINE TABLE join_room SCHEMALESS
 DEFINE FIELD room_id ON join_room TYPE record<room>;
 
 DEFINE EVENT join_room ON TABLE join_room WHEN $event == "CREATE" THEN {
-    LET $presence = 
-        SELECT * FROM presence 
-        WHERE room = $after.room_id AND user = $auth.id;
+    LET $users = SELECT VALUE users FROM ONLY $after.room_id;
+    LET $is_in_room = RETURN $auth.id IN $users;
 
-    LET $has_presence_record = count($presence) > 0;
-
-    IF $has_presence_record THEN
+    IF $is_in_room THEN
     {
-        UPDATE presence SET status = "joined" WHERE room = $after.room_id AND user = $auth.id;
+        THROW "You are already in this room";
     }
     ELSE
     {
-        CREATE presence SET room = $after.room_id, user = $auth.id;
+        UPDATE $after.room_id SET users += [$auth.id];
+        CREATE presence SET user = $auth.id;
+        CREATE message SET room = $after.room_id, author = $auth.id, type = "ENTER_ROOM";
     }
     END;
-
-    CREATE message SET room = $after.room_id, author = $auth.id, type = "ENTER_ROOM";
 };
