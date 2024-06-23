@@ -5,6 +5,7 @@ import { ConnectFn, SurrealDbProvider } from "./contexts/surrealdb-provider";
 import { Surreal } from "surrealdb.js";
 import { DB, NS, SURREAL_ENDPOINT } from "./constants/db";
 import { ACCESS_TOKEN } from "./constants/storage";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient();
 const surrealClient = new Surreal();
@@ -28,6 +29,8 @@ const App = () => {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools initialIsOpen={false} />
+
         <SurrealDbProvider
           client={surrealClient}
           endpoint={SURREAL_ENDPOINT}
