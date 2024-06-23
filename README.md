@@ -31,10 +31,9 @@ Current configuration:
 
 - Signal user presence in room periodically (every 10 seconds)
 - Display presence status:
-  - **gray** - left
   - **green** - < 2min of inactivity
-  - **orange** - < 10min of inactivity
-  - **red** - > 10min of inactivity
+  - **yellow** - < 10min of inactivity
+  - **gray** - > 10min of inactivity
 
 ## Get started
 

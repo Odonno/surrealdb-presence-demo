@@ -21,10 +21,10 @@ const getPresenceBackgroundClass = (
   }
 
   if (diffTimeInSeconds < ORANGE_STATUS_THRESHOLD) {
-    return "bg-orange-500";
+    return "bg-yellow-500";
   }
 
-  return "bg-red-500";
+  return "bg-gray-500";
 };
 
 export type PresenceProps = {
