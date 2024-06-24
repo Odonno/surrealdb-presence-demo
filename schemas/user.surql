@@ -5,7 +5,7 @@ DEFINE TABLE user SCHEMALESS
         FOR create, delete NONE;
 
 DEFINE FIELD username ON user TYPE string;
-DEFINE FIELD email ON user TYPE string;
+DEFINE FIELD email ON user TYPE string PERMISSIONS FOR select NONE;
 DEFINE FIELD passcode ON user TYPE string PERMISSIONS FOR select NONE;
 DEFINE FIELD registered_at ON user TYPE datetime DEFAULT time::now();
 DEFINE FIELD avatar ON user TYPE option<string>;
