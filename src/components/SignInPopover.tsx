@@ -17,7 +17,7 @@ import { queryKeys } from "@/lib/queryKeys";
 import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 
 const emailSchema = z.string().email();
-const passwordSchema = z.string().min(6);
+const passcodeSchema = z.string().min(6).max(6);
 
 const emailAtom = atomWithValidate("", {
   validate: async (email) => {
@@ -31,11 +31,11 @@ const emailAtom = atomWithValidate("", {
   },
 });
 
-const passwordAtom = atomWithValidate("", {
-  validate: async (password) => {
+const passcodeAtom = atomWithValidate("", {
+  validate: async (passcode) => {
     try {
-      passwordSchema.parse(password);
-      return password;
+      passcodeSchema.parse(passcode);
+      return passcode;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       throw err.issues;
@@ -45,12 +45,12 @@ const passwordAtom = atomWithValidate("", {
 
 const formControlAtom = atomWithFormControls({
   email: emailAtom,
-  password: passwordAtom,
+  passcode: passcodeAtom,
 });
 
 type SigninMutationProps = {
   email: string;
-  password: string;
+  passcode: string;
 };
 
 const SignInPopover = () => {
@@ -91,7 +91,7 @@ const SignInPopover = () => {
   const handleSignIn = async () => {
     await signin.mutateAsync({
       email: values.email,
-      password: values.password,
+      passcode: values.passcode,
     });
   };
 
@@ -126,20 +126,20 @@ const SignInPopover = () => {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="passcode">Passcode</Label>
             <Input
-              id="password"
+              id="passcode"
               type="password"
-              value={values.password}
+              value={values.passcode}
               onChange={(e) => {
-                handleOnChange("password")(e.target.value);
+                handleOnChange("passcode")(e.target.value);
               }}
-              onFocus={handleOnFocus("password")}
-              onBlur={handleOnBlur("password")}
+              onFocus={handleOnFocus("passcode")}
+              onBlur={handleOnBlur("passcode")}
             />
-            {touched.password && fieldErrors.password ? (
+            {touched.passcode && fieldErrors.passcode ? (
               <p className="text-sm font-medium text-destructive">
-                {fieldErrors.password[0].message}
+                {fieldErrors.passcode[0].message}
               </p>
             ) : null}
           </div>

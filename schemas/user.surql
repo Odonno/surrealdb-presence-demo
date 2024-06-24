@@ -6,7 +6,7 @@ DEFINE TABLE user SCHEMALESS
 
 DEFINE FIELD username ON user TYPE string;
 DEFINE FIELD email ON user TYPE string;
-DEFINE FIELD password ON user TYPE string PERMISSIONS FOR select NONE;
+DEFINE FIELD passcode ON user TYPE string PERMISSIONS FOR select NONE;
 DEFINE FIELD registered_at ON user TYPE datetime DEFAULT time::now();
 DEFINE FIELD avatar ON user TYPE option<string>;
 
@@ -21,10 +21,10 @@ DEFINE SCOPE user_scope
             username = $username,
             email = $email,
             avatar = "https://www.gravatar.com/avatar/" + crypto::md5($email),
-            password = crypto::argon2::generate($password)
+            passcode = fn::create_passcode($email)
     )
     SIGNIN (
         SELECT *
         FROM user
-        WHERE email = $email AND crypto::argon2::compare(password, $password)
+        WHERE email == $email AND passcode == $passcode
     );

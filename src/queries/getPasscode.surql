@@ -1,0 +1,1 @@
+RETURN fn::create_passcode($email);
