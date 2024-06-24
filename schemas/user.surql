@@ -26,5 +26,5 @@ DEFINE SCOPE user_scope
     SIGNIN (
         SELECT *
         FROM user
-        WHERE email == $email AND passcode == $passcode
+        WHERE email = $email AND passcode = $passcode
     );
