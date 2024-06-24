@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Room from "./Room";
 import { useRooms } from "@/api/rooms";
 import { Button } from "./ui/button";
@@ -6,8 +6,10 @@ import { Loader2, PlusIcon } from "lucide-react";
 import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 import createRoomQuery from "@/mutations/createRoom.surql?raw";
 import { useCanCreateRoom } from "@/api/canCreateRoom";
+import { queryKeys } from "@/lib/queryKeys";
 
 const Rooms = () => {
+  const queryClient = useQueryClient();
   const dbClient = useSurrealDbClient();
 
   const { data: rooms } = useRooms();
@@ -25,7 +27,9 @@ const Rooms = () => {
         throw new Error();
       }
 
-      // TODO
+      queryClient.refetchQueries({
+        queryKey: queryKeys.rooms.list.queryKey,
+      });
     },
   });
 

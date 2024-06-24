@@ -31,8 +31,6 @@ const SendMessageForm = ({ room }: SendMessageFormProps) => {
       if (!response?.[0] || response[0].status !== "OK") {
         throw new Error();
       }
-
-      // TODO
     },
     onSettled: () => {
       setContent("");
