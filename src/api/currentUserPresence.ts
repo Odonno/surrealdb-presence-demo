@@ -1,9 +1,9 @@
 import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 import { useLiveQuery } from "@/hooks/useLiveQuery";
+import { useMount } from "@/hooks/useMount";
 import { queryKeys } from "@/lib/queryKeys";
 import currentUserPresenceQuery from "@/queries/currentUserPresence.surql?raw";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffectOnce } from "usehooks-ts";
 
 const useCurrentUserPresence = () => {
   const dbClient = useSurrealDbClient();
@@ -64,7 +64,7 @@ export const useRealtimeCurrentUserPresence = () => {
     enabled: Boolean(liveQueryUuid),
   });
 
-  useEffectOnce(() => {
+  useMount(() => {
     return () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.users.current._ctx.presence.queryKey,

@@ -1,10 +1,10 @@
 import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 import { useLiveQuery } from "@/hooks/useLiveQuery";
+import { useMount } from "@/hooks/useMount";
 import type { RoomUser } from "@/lib/models";
 import { queryKeys } from "@/lib/queryKeys";
 import roomUsersQuery from "@/queries/roomUsers.surql?raw";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffectOnce } from "usehooks-ts";
 
 const useRoomUsers = (roomId: string, enabled: boolean) => {
   const dbClient = useSurrealDbClient();
@@ -90,7 +90,7 @@ export const useRealtimeRoomUsers = (roomId: string, enabled: boolean) => {
     enabled: Boolean(liveQueryUuid),
   });
 
-  useEffectOnce(() => {
+  useMount(() => {
     return () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.rooms.detail(roomId)._ctx.users.queryKey,

@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useEffectOnce } from "usehooks-ts";
 import { Surreal } from "surrealdb.js";
+import { useMount } from "@/hooks/useMount";
 
 export type ConnectFnProps = {
   client: Surreal;
@@ -69,7 +69,7 @@ export function SurrealDbProvider({
     await connectDb.mutateAsync();
   };
 
-  useEffectOnce(() => {
+  useMount(() => {
     if (autoconnect) {
       connect();
     }

@@ -5,7 +5,7 @@ import roomMessagesQuery from "@/queries/roomMessages.surql?raw";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { RoomMessage as RoomMessageModel } from "@/lib/models";
 import { useLiveQuery } from "@/hooks/useLiveQuery";
-import { useEffectOnce } from "usehooks-ts";
+import { useMount } from "@/hooks/useMount";
 
 const useRoomMessages = (roomId: string, enabled: boolean) => {
   const dbClient = useSurrealDbClient();
@@ -80,7 +80,7 @@ export const useRealtimeRoomMessages = (roomId: string, enabled: boolean) => {
     enabled: Boolean(liveQueryUuid),
   });
 
-  useEffectOnce(() => {
+  useMount(() => {
     return () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.rooms.detail(roomId)._ctx.messages.queryKey,
