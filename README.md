@@ -21,11 +21,15 @@ This is a list of the most important technologies used in this project:
   - Sign in
   - Sign out
   - Display authenticated user details such as realtime presence
-- List of rooms with number of active users, with the ability to join a room
-- Selected room (last joined room)
+- List of rooms with number of active users
+  - List of joined rooms vs. other rooms
+  - Join a room
+- Joined rooms
   - Display the list of users in rooms
   - Show presence of each user
-  - Ability to leave the room
+  - Send message
+  - Show realtime messages (when a user entered or left a room, when a new message is sent)
+  - Leave the room
 
 Current configuration:
 
