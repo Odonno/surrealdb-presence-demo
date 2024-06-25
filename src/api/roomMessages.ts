@@ -2,9 +2,12 @@ import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
 import type { RoomMessage } from "@/lib/models";
 import { queryKeys } from "@/lib/queryKeys";
 import roomMessagesQuery from "@/queries/roomMessages.surql?raw";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import type { RoomMessage as RoomMessageModel } from "@/lib/models";
+import { useLiveQuery } from "@/hooks/useLiveQuery";
+import { useEffectOnce } from "usehooks-ts";
 
-export const useRoomMessages = (roomId: string, enabled: boolean) => {
+const useRoomMessages = (roomId: string, enabled: boolean) => {
   const dbClient = useSurrealDbClient();
 
   const getRoomMessagesAsync = async () => {
@@ -26,7 +29,7 @@ export const useRoomMessages = (roomId: string, enabled: boolean) => {
   });
 };
 
-export const useRoomMessagesLive = (roomId: string, enabled: boolean) => {
+const useRoomMessagesLive = (roomId: string, enabled: boolean) => {
   const dbClient = useSurrealDbClient();
 
   const getRoomMessagesLiveAsync = async () => {
@@ -52,4 +55,38 @@ export const useRoomMessagesLive = (roomId: string, enabled: boolean) => {
     queryFn: getRoomMessagesLiveAsync,
     enabled,
   });
+};
+
+export const useRealtimeRoomMessages = (roomId: string, enabled: boolean) => {
+  const queryClient = useQueryClient();
+
+  const { data: messages, isSuccess } = useRoomMessages(roomId, enabled);
+  const { data: liveQueryUuid } = useRoomMessagesLive(
+    roomId,
+    enabled && isSuccess
+  );
+
+  useLiveQuery({
+    queryUuid: liveQueryUuid ?? "",
+    callback: ({ action, result }) => {
+      if (action === "CREATE") {
+        queryClient.setQueryData(
+          queryKeys.rooms.detail(roomId)._ctx.messages.queryKey,
+          (old: RoomMessageModel[]) =>
+            [result as unknown as RoomMessageModel, ...old].slice(0, 3)
+        );
+      }
+    },
+    enabled: Boolean(liveQueryUuid),
+  });
+
+  useEffectOnce(() => {
+    return () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.rooms.detail(roomId)._ctx.messages.queryKey,
+      });
+    };
+  });
+
+  return messages;
 };

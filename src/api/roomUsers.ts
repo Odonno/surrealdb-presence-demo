@@ -1,10 +1,12 @@
 import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
+import { useLiveQuery } from "@/hooks/useLiveQuery";
 import type { RoomUser } from "@/lib/models";
 import { queryKeys } from "@/lib/queryKeys";
 import roomUsersQuery from "@/queries/roomUsers.surql?raw";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffectOnce } from "usehooks-ts";
 
-export const useRoomUsers = (roomId: string, enabled: boolean) => {
+const useRoomUsers = (roomId: string, enabled: boolean) => {
   const dbClient = useSurrealDbClient();
 
   const getRoomUsersAsync = async () => {
@@ -26,7 +28,7 @@ export const useRoomUsers = (roomId: string, enabled: boolean) => {
   });
 };
 
-export const useRoomUsersLive = (roomId: string, enabled: boolean) => {
+const useRoomUsersLive = (roomId: string, enabled: boolean) => {
   const dbClient = useSurrealDbClient();
 
   const getRoomUsersLiveAsync = async () => {
@@ -50,4 +52,51 @@ export const useRoomUsersLive = (roomId: string, enabled: boolean) => {
     queryFn: getRoomUsersLiveAsync,
     enabled,
   });
+};
+
+export const useRealtimeRoomUsers = (roomId: string, enabled: boolean) => {
+  const queryClient = useQueryClient();
+
+  const { data: users, isSuccess } = useRoomUsers(roomId, enabled);
+  const { data: liveQueryUuid } = useRoomUsersLive(
+    roomId,
+    enabled && isSuccess
+  );
+
+  useLiveQuery({
+    queryUuid: liveQueryUuid ?? "",
+    callback: ({ action, result }) => {
+      if (action === "CREATE") {
+        queryClient.setQueryData(
+          queryKeys.rooms.detail(roomId)._ctx.users.queryKey,
+          (old: RoomUser[]) => [...old, result as unknown as RoomUser]
+        );
+      }
+
+      if (action === "UPDATE") {
+        queryClient.setQueryData(
+          queryKeys.rooms.detail(roomId)._ctx.users.queryKey,
+          (old: RoomUser[]) =>
+            old.map((u) => {
+              if (u.user_id === (result as unknown as RoomUser).user_id) {
+                return result as unknown as RoomUser;
+              }
+
+              return u;
+            })
+        );
+      }
+    },
+    enabled: Boolean(liveQueryUuid),
+  });
+
+  useEffectOnce(() => {
+    return () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.rooms.detail(roomId)._ctx.users.queryKey,
+      });
+    };
+  });
+
+  return users;
 };

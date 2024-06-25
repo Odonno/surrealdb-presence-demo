@@ -1,39 +1,13 @@
-import type { Room, RoomMessage as RoomMessageModel } from "@/lib/models";
+import type { Room } from "@/lib/models";
 import RoomMessage from "./RoomMessage";
-import { useQueryClient } from "@tanstack/react-query";
-import { useRoomMessages, useRoomMessagesLive } from "@/api/roomMessages";
-import { useLiveQuery } from "@/hooks/useLiveQuery";
-import { queryKeys } from "@/lib/queryKeys";
+import { useRealtimeRoomMessages } from "@/api/roomMessages";
 
 type RoomMessagesProps = {
   room: Room;
 };
 
 const RoomMessages = ({ room }: RoomMessagesProps) => {
-  const queryClient = useQueryClient();
-
-  const { data: messages, isSuccess } = useRoomMessages(
-    room.id,
-    room.is_in_room
-  );
-  const { data: liveQueryUuid } = useRoomMessagesLive(
-    room.id,
-    room.is_in_room && isSuccess
-  );
-
-  useLiveQuery({
-    queryUuid: liveQueryUuid ?? "",
-    callback: ({ action, result }) => {
-      if (action === "CREATE") {
-        queryClient.setQueryData(
-          queryKeys.rooms.detail(room.id)._ctx.messages.queryKey,
-          (old: RoomMessageModel[]) =>
-            [result as unknown as RoomMessageModel, ...old].slice(0, 3)
-        );
-      }
-    },
-    enabled: Boolean(liveQueryUuid),
-  });
+  const messages = useRealtimeRoomMessages(room.id, room.is_in_room);
 
   return (
     <ul className="mt-6 flex flex-col gap-1">
