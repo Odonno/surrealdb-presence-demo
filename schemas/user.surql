@@ -20,7 +20,7 @@ DEFINE SCOPE user_scope
         SET
             username = $username,
             email = $email,
-            avatar = "https://www.gravatar.com/avatar/" + crypto::md5($email),
+            avatar = "https://www.gravatar.com/avatar/" + crypto::md5($email) + "?d=identicon",
             passcode = fn::create_passcode($email)
     )
     SIGNIN (
