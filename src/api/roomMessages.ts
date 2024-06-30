@@ -7,6 +7,8 @@ import type { RoomMessage as RoomMessageModel } from "@/lib/models";
 import { useLiveQuery } from "@/hooks/useLiveQuery";
 import { useMount } from "@/hooks/useMount";
 
+const MAX_MESSAGES = 3;
+
 const useRoomMessages = (roomId: string, enabled: boolean) => {
   const dbClient = useSurrealDbClient();
 
@@ -73,7 +75,10 @@ export const useRealtimeRoomMessages = (roomId: string, enabled: boolean) => {
         queryClient.setQueryData(
           queryKeys.rooms.detail(roomId)._ctx.messages.queryKey,
           (old: RoomMessageModel[]) =>
-            [result as unknown as RoomMessageModel, ...old].slice(0, 3)
+            [result as unknown as RoomMessageModel, ...old].slice(
+              0,
+              MAX_MESSAGES
+            )
         );
       }
     },

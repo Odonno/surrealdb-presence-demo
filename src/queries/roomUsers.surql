@@ -7,4 +7,5 @@ SELECT
     user.registered_at AS registered_at
 FROM last_presence
 WHERE user IN $room_id.users
-ORDER BY last_presence DESC;
+ORDER BY last_presence DESC
+LIMIT 12;

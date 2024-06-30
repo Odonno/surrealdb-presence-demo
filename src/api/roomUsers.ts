@@ -6,6 +6,8 @@ import { queryKeys } from "@/lib/queryKeys";
 import roomUsersQuery from "@/queries/roomUsers.surql?raw";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
+const MAX_USERS = 12;
+
 const useRoomUsers = (roomId: string, enabled: boolean) => {
   const dbClient = useSurrealDbClient();
 
@@ -37,7 +39,8 @@ const useRoomUsersLive = (roomId: string, enabled: boolean) => {
     // see https://github.com/surrealdb/surrealdb/issues/2641
     const query = `LIVE ${roomUsersQuery}`
       .replace("$room_id", roomId)
-      .replace(/ORDER BY (.+)([^;|\n])/g, "");
+      .replace(/ORDER BY (.+)([^;|\n])/g, "")
+      .replace(/LIMIT ([^;|\n])/g, "");
     const response = await dbClient.query<[string]>(query);
 
     if (!response?.[0]?.result) {
@@ -69,7 +72,8 @@ export const useRealtimeRoomUsers = (roomId: string, enabled: boolean) => {
       if (action === "CREATE") {
         queryClient.setQueryData(
           queryKeys.rooms.detail(roomId)._ctx.users.queryKey,
-          (old: RoomUser[]) => [...old, result as unknown as RoomUser]
+          (old: RoomUser[]) =>
+            [...old, result as unknown as RoomUser].slice(0, MAX_USERS)
         );
       }
 
@@ -77,13 +81,20 @@ export const useRealtimeRoomUsers = (roomId: string, enabled: boolean) => {
         queryClient.setQueryData(
           queryKeys.rooms.detail(roomId)._ctx.users.queryKey,
           (old: RoomUser[]) =>
-            old.map((u) => {
-              if (u.user_id === (result as unknown as RoomUser).user_id) {
-                return result as unknown as RoomUser;
-              }
+            old
+              .map((u) => {
+                if (u.user_id === (result as unknown as RoomUser).user_id) {
+                  return result as unknown as RoomUser;
+                }
 
-              return u;
-            })
+                return u;
+              })
+              .toSorted(
+                (a, b) =>
+                  new Date(b.last_presence!).getTime() -
+                  new Date(a.last_presence!).getTime()
+              )
+              .slice(0, MAX_USERS)
         );
       }
     },
