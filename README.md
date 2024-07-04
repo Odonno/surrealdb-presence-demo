@@ -64,6 +64,14 @@ bun start
 
 And voilà!
 
+5. If you feel a little lonely when playing locally with the app, know that there is a simulator to bring some life. Adding new users who have the ability to join rooms, to leave rooms and sometimes to write a message!
+
+Run the following command to start the simulator:
+
+```bash
+bun run .\simulator.ts
+```
+
 ## Architecture
 
 This project is using the following architecture:
