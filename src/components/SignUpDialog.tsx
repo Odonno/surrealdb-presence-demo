@@ -225,7 +225,7 @@ const SignUpDialog = () => {
           ) : null}
         </div>
 
-        <DialogFooter className="flex !flex-col items-end">
+        <DialogFooter className="flex flex-col! items-end">
           <Button
             type="submit"
             disabled={!isValid || signup.isPending}
