@@ -1,20 +1,20 @@
-DEFINE TABLE user SCHEMALESS
+DEFINE TABLE OVERWRITE user SCHEMALESS
     PERMISSIONS
         FOR select FULL
         FOR update WHERE id == $auth.id
         FOR create, delete NONE;
 
-DEFINE FIELD username ON user TYPE string;
-DEFINE FIELD email ON user TYPE string PERMISSIONS FOR select NONE;
-DEFINE FIELD passcode ON user TYPE string PERMISSIONS FOR select NONE;
-DEFINE FIELD registered_at ON user TYPE datetime DEFAULT time::now();
-DEFINE FIELD avatar ON user TYPE option<string>;
+DEFINE FIELD OVERWRITE username ON user TYPE string;
+DEFINE FIELD OVERWRITE email ON user TYPE string PERMISSIONS FOR select NONE;
+DEFINE FIELD OVERWRITE passcode ON user TYPE string PERMISSIONS FOR select NONE;
+DEFINE FIELD OVERWRITE registered_at ON user TYPE datetime DEFAULT time::now();
+DEFINE FIELD OVERWRITE avatar ON user TYPE option<string>;
 
-DEFINE INDEX unique_username ON user COLUMNS username UNIQUE;
-DEFINE INDEX unique_email ON user COLUMNS email UNIQUE;
+DEFINE INDEX OVERWRITE unique_username ON user COLUMNS username UNIQUE;
+DEFINE INDEX OVERWRITE unique_email ON user COLUMNS email UNIQUE;
 
-DEFINE SCOPE user_scope
-    SESSION 7d
+DEFINE ACCESS OVERWRITE user_access
+    ON DATABASE TYPE RECORD
     SIGNUP (
         CREATE user
         SET

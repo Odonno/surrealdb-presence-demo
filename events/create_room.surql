@@ -1,9 +1,9 @@
-DEFINE TABLE create_room SCHEMALESS
+DEFINE TABLE OVERWRITE create_room SCHEMALESS
     PERMISSIONS 
         FOR create WHERE $auth
         FOR select, update, delete NONE;
 
-DEFINE EVENT create_room ON TABLE create_room WHEN $event == "CREATE" THEN {
+DEFINE EVENT OVERWRITE create_room ON TABLE create_room WHEN $event == "CREATE" THEN {
     LET $rooms = (
         SELECT * 
         FROM room 

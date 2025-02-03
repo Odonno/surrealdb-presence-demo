@@ -1,4 +1,4 @@
-DEFINE TABLE last_presence AS
+DEFINE TABLE OVERWRITE last_presence AS
 	SELECT
         user,
         time::max(updated_at) AS at

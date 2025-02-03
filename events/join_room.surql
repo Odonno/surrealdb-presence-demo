@@ -1,11 +1,11 @@
-DEFINE TABLE join_room SCHEMALESS
+DEFINE TABLE OVERWRITE join_room SCHEMALESS
     PERMISSIONS 
         FOR create WHERE $auth
         FOR select, update, delete NONE;
 
-DEFINE FIELD room_id ON join_room TYPE record<room>;
+DEFINE FIELD OVERWRITE room_id ON join_room TYPE record<room>;
 
-DEFINE EVENT join_room ON TABLE join_room WHEN $event == "CREATE" THEN {
+DEFINE EVENT OVERWRITE join_room ON TABLE join_room WHEN $event == "CREATE" THEN {
     LET $users = SELECT VALUE users FROM ONLY $after.room_id;
     LET $is_in_room = RETURN $auth.id IN $users;
 
