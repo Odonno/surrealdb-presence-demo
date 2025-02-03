@@ -1,44 +1,44 @@
 import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
-import type { LiveHandler, Uuid } from "surrealdb";
 import { useEffect } from "react";
+import type { LiveHandler, Uuid } from "surrealdb";
 
 export type UseLiveQueryProps<
-  T extends Record<string, unknown> = Record<string, unknown>
+	T extends Record<string, unknown> = Record<string, unknown>,
 > = {
-  queryUuid: Uuid | undefined;
-  callback: LiveHandler<T>;
-  enabled?: boolean;
+	queryUuid: Uuid | undefined;
+	callback: LiveHandler<T>;
+	enabled?: boolean;
 };
 
 export const useLiveQuery = ({
-  queryUuid,
-  callback,
-  enabled = true,
+	queryUuid,
+	callback,
+	enabled = true,
 }: UseLiveQueryProps) => {
-  const dbClient = useSurrealDbClient();
+	const dbClient = useSurrealDbClient();
 
-  useEffect(() => {
-    if (enabled && !!queryUuid) {
-      const runLiveQuery = async () => {
-        await dbClient.subscribeLive(queryUuid, callback);
-      };
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		if (enabled && !!queryUuid) {
+			const runLiveQuery = async () => {
+				await dbClient.subscribeLive(queryUuid, callback);
+			};
 
-      const clearLiveQuery = async () => {
-        await dbClient.kill(queryUuid);
-      };
+			const clearLiveQuery = async () => {
+				await dbClient.kill(queryUuid);
+			};
 
-      const handleBeforeUnload = () => {
-        clearLiveQuery();
-      };
+			const handleBeforeUnload = () => {
+				clearLiveQuery();
+			};
 
-      window.addEventListener("beforeunload", handleBeforeUnload);
-      runLiveQuery();
+			window.addEventListener("beforeunload", handleBeforeUnload);
+			runLiveQuery();
 
-      return () => {
-        clearLiveQuery();
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-      };
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryUuid, enabled]);
+			return () => {
+				clearLiveQuery();
+				window.removeEventListener("beforeunload", handleBeforeUnload);
+			};
+		}
+	}, [queryUuid, enabled]);
 };

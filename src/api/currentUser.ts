@@ -6,22 +6,22 @@ import currentUserQuery from "@/queries/currentUser.surql?raw";
 import { useQuery } from "@tanstack/react-query";
 
 export const useCurrentUser = (enabled: boolean) => {
-  const dbClient = useSurrealDbClient();
+	const dbClient = useSurrealDbClient();
 
-  const getCurrentUserAsync = async () => {
-    const response = await dbClient.query<[User[]]>(currentUserQuery);
+	const getCurrentUserAsync = async () => {
+		const response = await dbClient.query<[User[]]>(currentUserQuery);
 
-    if (!response?.[0]) {
-      throw new MissingAuthenticationError();
-    }
+		if (!response?.[0]) {
+			throw new MissingAuthenticationError();
+		}
 
-    return response[0][0];
-  };
+		return response[0][0];
+	};
 
-  return useQuery({
-    ...queryKeys.users.current,
-    queryFn: getCurrentUserAsync,
-    enabled,
-    retry: false,
-  });
+	return useQuery({
+		...queryKeys.users.current,
+		queryFn: getCurrentUserAsync,
+		enabled,
+		retry: false,
+	});
 };

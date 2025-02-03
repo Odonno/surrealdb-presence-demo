@@ -1,41 +1,41 @@
-import { useMutation } from "@tanstack/react-query";
-import { usePageVisibility } from "react-page-visibility";
-import { useInterval } from "usehooks-ts";
-import signalPresenceQuery from "@/mutations/signalPresence.surql?raw";
-import { useEffect } from "react";
 import { SECOND } from "@/constants/time";
 import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
+import signalPresenceQuery from "@/mutations/signalPresence.surql?raw";
+import { useMutation } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { usePageVisibility } from "react-page-visibility";
+import { useInterval } from "usehooks-ts";
 
 const SIGNAL_PRESENCE_INTERVAL = 10 * SECOND;
 
 const SignalPresence = () => {
-  const isPageVisible = usePageVisibility();
-  const canSignalPresence = isPageVisible;
+	const isPageVisible = usePageVisibility();
+	const canSignalPresence = isPageVisible;
 
-  const dbClient = useSurrealDbClient();
+	const dbClient = useSurrealDbClient();
 
-  const signalPresence = useMutation({
-    mutationKey: ["signalPresence"],
-    mutationFn: async () => {
-      await dbClient.query(signalPresenceQuery);
-    },
-  });
+	const signalPresence = useMutation({
+		mutationKey: ["signalPresence"],
+		mutationFn: async () => {
+			await dbClient.query(signalPresenceQuery);
+		},
+	});
 
-  useInterval(
-    () => {
-      signalPresence.mutate();
-    },
-    canSignalPresence ? SIGNAL_PRESENCE_INTERVAL : null
-  );
+	useInterval(
+		() => {
+			signalPresence.mutate();
+		},
+		canSignalPresence ? SIGNAL_PRESENCE_INTERVAL : null,
+	);
 
-  useEffect(() => {
-    if (canSignalPresence) {
-      signalPresence.mutate();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPageVisible]);
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		if (canSignalPresence) {
+			signalPresence.mutate();
+		}
+	}, [isPageVisible]);
 
-  return null;
+	return null;
 };
 
 export default SignalPresence;

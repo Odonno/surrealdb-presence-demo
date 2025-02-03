@@ -10,95 +10,97 @@ import type { Uuid } from "surrealdb";
 const MAX_USERS = 12;
 
 const useRoomUsers = (roomId: string, enabled: boolean) => {
-  const dbClient = useSurrealDbClient();
+	const dbClient = useSurrealDbClient();
 
-  const getRoomUsersAsync = async () => {
-    const response = await dbClient.query<[RoomUser[]]>(roomUsersQuery, {
-      room_id: roomId,
-    });
-    return response[0];
-  };
+	const getRoomUsersAsync = async () => {
+		const response = await dbClient.query<[RoomUser[]]>(roomUsersQuery, {
+			room_id: roomId,
+		});
+		return response[0];
+	};
 
-  return useQuery({
-    ...queryKeys.rooms.detail(roomId)._ctx.users,
-    queryFn: getRoomUsersAsync,
-    enabled,
-  });
+	return useQuery({
+		...queryKeys.rooms.detail(roomId)._ctx.users,
+		queryFn: getRoomUsersAsync,
+		enabled,
+	});
 };
 
 const useRoomUsersLive = (roomId: string, enabled: boolean) => {
-  const dbClient = useSurrealDbClient();
+	const dbClient = useSurrealDbClient();
 
-  const getRoomUsersLiveAsync = async () => {
-    // 💡 cannot use params with LIVE queries at the moment
-    // 💡 cannot use ORDER BY statement in LQ
-    // see https://github.com/surrealdb/surrealdb/issues/2641
-    const query = `LIVE ${roomUsersQuery}`
-      .replace("$room_id", roomId)
-      .replace(/ORDER BY (.+)([^;|\n])/g, "")
-      .replace(/LIMIT ([^;|\n])/g, "");
-    const response = await dbClient.query<[Uuid]>(query);
-    return response[0];
-  };
+	const getRoomUsersLiveAsync = async () => {
+		// 💡 cannot use params with LIVE queries at the moment
+		// 💡 cannot use ORDER BY statement in LQ
+		// see https://github.com/surrealdb/surrealdb/issues/2641
+		const query = `LIVE ${roomUsersQuery}`
+			.replace("$room_id", roomId)
+			.replace(/ORDER BY (.+)([^;|\n])/g, "")
+			.replace(/LIMIT ([^;|\n])/g, "");
+		const response = await dbClient.query<[Uuid]>(query);
+		return response[0];
+	};
 
-  return useQuery({
-    ...queryKeys.rooms.detail(roomId)._ctx.users._ctx.live,
-    queryFn: getRoomUsersLiveAsync,
-    enabled,
-  });
+	return useQuery({
+		...queryKeys.rooms.detail(roomId)._ctx.users._ctx.live,
+		queryFn: getRoomUsersLiveAsync,
+		enabled,
+	});
 };
 
 export const useRealtimeRoomUsers = (roomId: string, enabled: boolean) => {
-  const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-  const { data: users, isSuccess } = useRoomUsers(roomId, enabled);
-  const { data: liveQueryUuid } = useRoomUsersLive(
-    roomId,
-    enabled && isSuccess
-  );
+	const { data: users, isSuccess } = useRoomUsers(roomId, enabled);
+	const { data: liveQueryUuid } = useRoomUsersLive(
+		roomId,
+		enabled && isSuccess,
+	);
 
-  useLiveQuery({
-    queryUuid: liveQueryUuid,
-    callback: (action, result) => {
-      if (action === "CREATE") {
-        queryClient.setQueryData(
-          queryKeys.rooms.detail(roomId)._ctx.users.queryKey,
-          (old: RoomUser[]) =>
-            [...old, result as unknown as RoomUser].slice(0, MAX_USERS)
-        );
-      }
+	useLiveQuery({
+		queryUuid: liveQueryUuid,
+		callback: (action, result) => {
+			if (action === "CREATE") {
+				queryClient.setQueryData(
+					queryKeys.rooms.detail(roomId)._ctx.users.queryKey,
+					(old: RoomUser[]) =>
+						[...old, result as unknown as RoomUser].slice(0, MAX_USERS),
+				);
+			}
 
-      if (action === "UPDATE") {
-        queryClient.setQueryData(
-          queryKeys.rooms.detail(roomId)._ctx.users.queryKey,
-          (old: RoomUser[]) =>
-            old
-              .map((u) => {
-                if (u.user_id === (result as unknown as RoomUser).user_id) {
-                  return result as unknown as RoomUser;
-                }
+			if (action === "UPDATE") {
+				queryClient.setQueryData(
+					queryKeys.rooms.detail(roomId)._ctx.users.queryKey,
+					(old: RoomUser[]) =>
+						old
+							.map((u) => {
+								if (u.user_id === (result as unknown as RoomUser).user_id) {
+									return result as unknown as RoomUser;
+								}
 
-                return u;
-              })
-              .toSorted(
-                (a, b) =>
-                  new Date(b.last_presence!).getTime() -
-                  new Date(a.last_presence!).getTime()
-              )
-              .slice(0, MAX_USERS)
-        );
-      }
-    },
-    enabled: Boolean(liveQueryUuid),
-  });
+								return u;
+							})
+							.toSorted(
+								(a, b) =>
+									// biome-ignore lint/style/noNonNullAssertion: <explanation>
+									new Date(b.last_presence!).getTime() -
+									// biome-ignore lint/style/noNonNullAssertion: <explanation>
+									new Date(a.last_presence!).getTime(),
+							)
+							.slice(0, MAX_USERS),
+				);
+			}
+		},
+		enabled: Boolean(liveQueryUuid),
+	});
 
-  useMount(() => {
-    return () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.rooms.detail(roomId)._ctx.users.queryKey,
-      });
-    };
-  });
+	useMount(() => {
+		return () => {
+			queryClient.invalidateQueries({
+				queryKey: queryKeys.rooms.detail(roomId)._ctx.users.queryKey,
+			});
+		};
+	});
 
-  return users;
+	return users;
 };
