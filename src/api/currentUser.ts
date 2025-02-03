@@ -11,11 +11,11 @@ export const useCurrentUser = (enabled: boolean) => {
   const getCurrentUserAsync = async () => {
     const response = await dbClient.query<[User[]]>(currentUserQuery);
 
-    if (!response?.[0]?.result?.[0]) {
+    if (!response?.[0]) {
       throw new MissingAuthenticationError();
     }
 
-    return response[0].result[0];
+    return response[0][0];
   };
 
   return useQuery({

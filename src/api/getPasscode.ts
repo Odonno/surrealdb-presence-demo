@@ -11,12 +11,7 @@ export const useGetPasscode = (email: string) => {
       const response = await dbClient.query<[string]>(getPasscodeQuery, {
         email,
       });
-
-      if (!response?.[0]) {
-        throw new Error();
-      }
-
-      return response[0].result;
+      return response?.[0];
     },
     enabled: !!email,
   });

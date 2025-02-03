@@ -1,12 +1,12 @@
 import { useSurrealDbClient } from "@/contexts/surrealdb-provider";
-import { LiveQueryResponse } from "node_modules/surrealdb.js/esm/types";
+import type { LiveHandler, Uuid } from "surrealdb";
 import { useEffect } from "react";
 
 export type UseLiveQueryProps<
   T extends Record<string, unknown> = Record<string, unknown>
 > = {
-  queryUuid: string;
-  callback: (data: LiveQueryResponse<T>) => unknown;
+  queryUuid: Uuid | undefined;
+  callback: LiveHandler<T>;
   enabled?: boolean;
 };
 
@@ -18,9 +18,9 @@ export const useLiveQuery = ({
   const dbClient = useSurrealDbClient();
 
   useEffect(() => {
-    if (enabled) {
+    if (enabled && !!queryUuid) {
       const runLiveQuery = async () => {
-        await dbClient.listenLive(queryUuid, callback);
+        await dbClient.subscribeLive(queryUuid, callback);
       };
 
       const clearLiveQuery = async () => {

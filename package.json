@@ -30,7 +30,7 @@
     "react-dom": "^18.3.1",
     "react-page-visibility": "^7.0.0",
     "remeda": "^1.61.0",
-    "surrealdb.js": "^0.9.1",
+    "surrealdb": "^1.1.0",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
     "usehooks-ts": "^2.16.0",
@@ -39,6 +39,7 @@
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "@tanstack/eslint-plugin-query": "^5.43.1",
+    "@types/bun": "^1.2.0",
     "@types/node": "^20.14.7",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",

@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Surreal } from "surrealdb.js";
+import { Surreal } from "surrealdb";
 import { useMount } from "@/hooks/useMount";
 
 export type ConnectFnProps = {

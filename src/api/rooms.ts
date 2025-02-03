@@ -9,12 +9,7 @@ export const useRooms = () => {
 
   const getRoomsAsync = async () => {
     const response = await dbClient.query<[Room[]]>(roomsQuery);
-
-    if (!response?.[0]?.result) {
-      throw new Error();
-    }
-
-    return response[0].result;
+    return response[0];
   };
 
   return useQuery({

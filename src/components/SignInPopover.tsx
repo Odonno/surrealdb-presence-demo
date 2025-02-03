@@ -6,7 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { DB, NS, USER_SCOPE } from "@/constants/db";
+import { DB, NS, USER_ACCESS } from "@/constants/db";
 import { ACCESS_TOKEN } from "@/constants/storage";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2, LogIn } from "lucide-react";
@@ -69,12 +69,12 @@ const SignInPopover = () => {
 
   const signin = useMutation({
     mutationKey: ["signin"],
-    mutationFn: async (props: SigninMutationProps) => {
+    mutationFn: async (variables: SigninMutationProps) => {
       const token = await dbClient.signin({
-        NS: NS,
-        DB: DB,
-        SC: USER_SCOPE,
-        ...props,
+        namespace: NS,
+        database: DB,
+        access: USER_ACCESS,
+        variables,
       });
 
       if (token) {

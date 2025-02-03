@@ -1,6 +1,6 @@
-import { Surreal } from "surrealdb.js";
+import { Surreal } from "surrealdb";
 import { faker } from "@faker-js/faker";
-import { DB, NS, SURREAL_ENDPOINT, USER_SCOPE } from "./src/constants/db";
+import { DB, NS, SURREAL_ENDPOINT, USER_ACCESS } from "./src/constants/db";
 import { SECONDS_PER_MINUTE } from "./src/constants/time";
 import createRoomQuery from "./src/mutations/createRoom.surql" with { type: "text" };
 import joinRoomQuery from "./src/mutations/joinRoom.surql" with { type: "text" };
@@ -33,7 +33,7 @@ const config: SimulatorConfig = {
 validateConfig(config);
 
 const rootClient = await createSurrealClient();
-rootClient.signin({ user: "root", pass: "root" });
+rootClient.signin({ username: "root", password: "root" });
 
 let iterationsInMinute = 0;
 let currentIterationConfig = generateCurrentIterationConfig(config);
@@ -155,7 +155,7 @@ while (true) {
 
 async function createSurrealClient() {
   const client = new Surreal();
-  await client.connect(SURREAL_ENDPOINT!, { ns: NS!, db: DB! });
+  await client.connect(SURREAL_ENDPOINT!, { namespace: NS!, database: DB! });
 
   return client;
 }
@@ -205,16 +205,20 @@ async function createUser() {
 
   const client = await createSurrealClient();
 
-  await client.signup({ SC: USER_SCOPE, username, email });
+  await client.signup({ access: USER_ACCESS, variables: { username, email } });
   await client.close();
 }
 
 async function tryCreateRoom(): Promise<void> {
   const user = await pickUser();
 
+  if (!user) {
+    return Promise.reject("No users available to join");
+  }
+
   const client = await createSurrealClient();
 
-  await client.signin({ SC: USER_SCOPE, ...user });
+  await client.signin({ access: USER_ACCESS, variables: user });
   await client.query(createRoomQuery);
   await client.close();
 }
@@ -223,9 +227,16 @@ async function tryJoinRoom(): Promise<void> {
   const user = await pickUser();
   const room = await pickRoom();
 
+  if (!user) {
+    return Promise.reject("No users available to join");
+  }
+  if (!room) {
+    return Promise.reject("No rooms available to join");
+  }
+
   const client = await createSurrealClient();
 
-  await client.signin({ SC: USER_SCOPE, ...user });
+  await client.signin({ access: USER_ACCESS, variables: user });
   await client.query(joinRoomQuery, {
     room_id: room.id,
   });
@@ -236,12 +247,23 @@ async function tryLeaveRoom(): Promise<void> {
   const user = await pickUser();
   const room = await pickRoom();
 
+  if (!user) {
+    return Promise.reject("No users available to join");
+  }
+  if (!room) {
+    return Promise.reject("No rooms available to join");
+  }
+
   const client = await createSurrealClient();
 
-  await client.signin({ SC: USER_SCOPE, ...user });
-  await client.query(leaveRoomQuery, {
-    room_id: room.id,
-  });
+  await client.signin({ access: USER_ACCESS, variables: user });
+  try {
+    await client.query(leaveRoomQuery, {
+      room_id: room.id,
+    });
+  } catch (e) {
+    // 💡 leaving room can fail beause of randomness
+  }
   await client.close();
 }
 
@@ -249,9 +271,16 @@ async function trySendMessage(): Promise<void> {
   const user = await pickUser();
   const room = await pickRoom();
 
+  if (!user) {
+    return Promise.reject("No users available to join");
+  }
+  if (!room) {
+    return Promise.reject("No rooms available to join");
+  }
+
   const client = await createSurrealClient();
 
-  await client.signin({ SC: USER_SCOPE, ...user });
+  await client.signin({ access: USER_ACCESS, variables: user });
   await client.query(
     sendMessageQuery,
     {
@@ -262,33 +291,40 @@ async function trySendMessage(): Promise<void> {
   await client.close();
 }
 
+type PickedUser = {
+  email: string;
+  passcode: string;
+}
+
 async function pickUser() {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = await rootClient.query<any>(`
+    const result = await rootClient.query<PickedUser[]>(`
 SELECT email, passcode
 FROM ONLY user
 ORDER BY rand()
 LIMIT 1;
 `);
 
-    return result[0].result;
+    return result[0];
   } catch (e) {
     console.error(e);
   }
 }
 
+type PickedRoom = {
+  id: string;
+}
+
 async function pickRoom() {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = await rootClient.query<any>(`
+    const result = await rootClient.query<PickedRoom[]>(`
 SELECT id
 FROM ONLY room
 ORDER BY rand()
 LIMIT 1;
 `);
 
-    return result[0].result;
+    return result[0];
   } catch (e) {
     console.error(e);
   }

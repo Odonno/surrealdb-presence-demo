@@ -6,6 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { RoomMessage as RoomMessageModel } from "@/lib/models";
 import { useLiveQuery } from "@/hooks/useLiveQuery";
 import { useMount } from "@/hooks/useMount";
+import type { Uuid } from "surrealdb";
 
 const MAX_MESSAGES = 3;
 
@@ -17,11 +18,7 @@ const useRoomMessages = (roomId: string, enabled: boolean) => {
       room_id: roomId,
     });
 
-    if (!response?.[0] || response[0].status !== "OK") {
-      throw new Error();
-    }
-
-    return response[0].result;
+    return response[0];
   };
 
   return useQuery({
@@ -43,13 +40,8 @@ const useRoomMessagesLive = (roomId: string, enabled: boolean) => {
       .replace("$room_id", roomId)
       .replace(/ORDER BY (.+)([^;|\n])/g, "")
       .replace(/LIMIT ([^;|\n])/g, "");
-    const response = await dbClient.query<[string]>(query);
-
-    if (!response?.[0]?.result) {
-      throw new Error();
-    }
-
-    return response[0].result;
+    const response = await dbClient.query<[Uuid]>(query);
+    return response[0];
   };
 
   return useQuery({
@@ -69,8 +61,8 @@ export const useRealtimeRoomMessages = (roomId: string, enabled: boolean) => {
   );
 
   useLiveQuery({
-    queryUuid: liveQueryUuid ?? "",
-    callback: ({ action, result }) => {
+    queryUuid: liveQueryUuid,
+    callback: (action, result) => {
       if (action === "CREATE") {
         queryClient.setQueryData(
           queryKeys.rooms.detail(roomId)._ctx.messages.queryKey,

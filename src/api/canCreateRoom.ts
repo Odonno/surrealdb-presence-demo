@@ -7,13 +7,8 @@ export const useCanCreateRoom = () => {
   const dbClient = useSurrealDbClient();
 
   const canCreateRoomAsync = async () => {
-    const response = await dbClient.query<[string]>(canCreateRoomQuery);
-
-    if (!response?.[0]) {
-      throw new Error();
-    }
-
-    return response[0].result as unknown as boolean;
+    const response = await dbClient.query<[boolean]>(canCreateRoomQuery);
+    return response[0];
   };
 
   return useQuery({

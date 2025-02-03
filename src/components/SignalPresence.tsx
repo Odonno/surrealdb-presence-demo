@@ -17,11 +17,7 @@ const SignalPresence = () => {
   const signalPresence = useMutation({
     mutationKey: ["signalPresence"],
     mutationFn: async () => {
-      const response = await dbClient.query(signalPresenceQuery);
-
-      if (!response?.[0] || response[0].status !== "OK") {
-        throw new Error();
-      }
+      await dbClient.query(signalPresenceQuery);
     },
   });
 

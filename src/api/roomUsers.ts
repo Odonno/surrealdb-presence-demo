@@ -5,6 +5,7 @@ import type { RoomUser } from "@/lib/models";
 import { queryKeys } from "@/lib/queryKeys";
 import roomUsersQuery from "@/queries/roomUsers.surql?raw";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import type { Uuid } from "surrealdb";
 
 const MAX_USERS = 12;
 
@@ -15,12 +16,7 @@ const useRoomUsers = (roomId: string, enabled: boolean) => {
     const response = await dbClient.query<[RoomUser[]]>(roomUsersQuery, {
       room_id: roomId,
     });
-
-    if (!response?.[0] || response[0].status !== "OK") {
-      throw new Error();
-    }
-
-    return response[0].result;
+    return response[0];
   };
 
   return useQuery({
@@ -41,13 +37,8 @@ const useRoomUsersLive = (roomId: string, enabled: boolean) => {
       .replace("$room_id", roomId)
       .replace(/ORDER BY (.+)([^;|\n])/g, "")
       .replace(/LIMIT ([^;|\n])/g, "");
-    const response = await dbClient.query<[string]>(query);
-
-    if (!response?.[0]?.result) {
-      throw new Error();
-    }
-
-    return response[0].result;
+    const response = await dbClient.query<[Uuid]>(query);
+    return response[0];
   };
 
   return useQuery({
@@ -67,8 +58,8 @@ export const useRealtimeRoomUsers = (roomId: string, enabled: boolean) => {
   );
 
   useLiveQuery({
-    queryUuid: liveQueryUuid ?? "",
-    callback: ({ action, result }) => {
+    queryUuid: liveQueryUuid,
+    callback: (action, result) => {
       if (action === "CREATE") {
         queryClient.setQueryData(
           queryKeys.rooms.detail(roomId)._ctx.users.queryKey,

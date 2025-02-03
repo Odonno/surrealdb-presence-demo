@@ -30,13 +30,9 @@ const Room = (props: RoomProps) => {
   const joinRoom = useMutation({
     mutationKey: ["joinRoom", room.id],
     mutationFn: async () => {
-      const response = await dbClient.query(joinRoomQuery, {
+      await dbClient.query(joinRoomQuery, {
         room_id: room.id,
       });
-
-      if (!response?.[0] || response[0].status !== "OK") {
-        throw new Error();
-      }
 
       // optimistic update
       queryClient.setQueryData(
@@ -60,13 +56,9 @@ const Room = (props: RoomProps) => {
   const leaveRoom = useMutation({
     mutationKey: ["leaveRoom", room.id],
     mutationFn: async () => {
-      const response = await dbClient.query(leaveRoomQuery, {
+      await dbClient.query(leaveRoomQuery, {
         room_id: room.id,
       });
-
-      if (!response?.[0] || response[0].status !== "OK") {
-        throw new Error();
-      }
 
       // optimistic update
       queryClient.setQueryData(

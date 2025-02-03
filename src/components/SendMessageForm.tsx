@@ -26,11 +26,7 @@ const SendMessageForm = ({ room }: SendMessageFormProps) => {
   const send = useMutation({
     mutationKey: ["sendMessage", room.id],
     mutationFn: async (props: SendMessageMutationProps) => {
-      const response = await dbClient.query(sendMessageQuery, props);
-
-      if (!response?.[0] || response[0].status !== "OK") {
-        throw new Error();
-      }
+      await dbClient.query(sendMessageQuery, props);
     },
     onSettled: () => {
       setContent("");

@@ -21,11 +21,7 @@ const Rooms = () => {
   const createRoom = useMutation({
     mutationKey: ["createRoom"],
     mutationFn: async () => {
-      const response = await dbClient.query(createRoomQuery);
-
-      if (!response?.[0] || response[0].status !== "OK") {
-        throw new Error();
-      }
+      await dbClient.query(createRoomQuery);
 
       queryClient.refetchQueries({
         queryKey: queryKeys.rooms.list.queryKey,

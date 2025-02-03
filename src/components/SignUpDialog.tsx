@@ -14,7 +14,7 @@ import { z } from "zod";
 import { atomWithFormControls, atomWithValidate } from "jotai-form";
 import { useAtomValue } from "jotai";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { DB, NS, USER_SCOPE } from "@/constants/db";
+import { DB, NS, USER_ACCESS } from "@/constants/db";
 import { ACCESS_TOKEN } from "@/constants/storage";
 import { CopyIcon, Loader2, UserPlus } from "lucide-react";
 import { queryKeys } from "@/lib/queryKeys";
@@ -99,12 +99,12 @@ const SignUpDialog = () => {
 
   const signup = useMutation({
     mutationKey: ["signup"],
-    mutationFn: async (props: SignupMutationProps) => {
+    mutationFn: async (variables: SignupMutationProps) => {
       const token = await dbClient.signup({
-        NS,
-        DB,
-        SC: USER_SCOPE,
-        ...props,
+        namespace: NS,
+        database: DB,
+        access: USER_ACCESS,
+        variables,
       });
 
       if (token) {

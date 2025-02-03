@@ -4,6 +4,7 @@ import { useMount } from "@/hooks/useMount";
 import { queryKeys } from "@/lib/queryKeys";
 import currentUserPresenceQuery from "@/queries/currentUserPresence.surql?raw";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import type { Uuid } from "surrealdb";
 
 const useCurrentUserPresence = () => {
   const dbClient = useSurrealDbClient();
@@ -11,11 +12,11 @@ const useCurrentUserPresence = () => {
   const getCurrentUserPresenceAsync = async () => {
     const response = await dbClient.query<[string]>(currentUserPresenceQuery);
 
-    if (!response?.[0]?.result?.[0]) {
+    if (!response?.[0]) {
       throw new Error();
     }
 
-    return new Date(response[0].result);
+    return new Date(response[0]);
   };
 
   return useQuery({
@@ -29,13 +30,8 @@ const useCurrentUserPresenceLive = (enabled: boolean) => {
 
   const getCurrentUserPresenceLiveAsync = async () => {
     const query = `LIVE ${currentUserPresenceQuery}`;
-    const response = await dbClient.query<[string]>(query);
-
-    if (!response?.[0]?.result?.[0]) {
-      throw new Error();
-    }
-
-    return response[0].result;
+    const response = await dbClient.query<[Uuid]>(query);
+    return response?.[0];
   };
 
   return useQuery({
@@ -52,8 +48,8 @@ export const useRealtimeCurrentUserPresence = () => {
   const { data: liveQueryUuid } = useCurrentUserPresenceLive(isSuccess);
 
   useLiveQuery({
-    queryUuid: liveQueryUuid ?? "",
-    callback: ({ action, result }) => {
+    queryUuid: liveQueryUuid,
+    callback: (action, result) => {
       if (action === "CREATE" || action === "UPDATE") {
         queryClient.setQueryData(
           queryKeys.users.current._ctx.presence.queryKey,
