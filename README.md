@@ -44,7 +44,7 @@ Current configuration:
 1. Start a new SurrealDB instance locally
 
 ```bash
-surreal start --log debug --user root --pass root memory --auth --allow-guests
+surreal start --log debug --user root --pass root memory --allow-guests
 ```
 
 2. Apply migrations
