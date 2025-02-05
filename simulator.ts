@@ -227,7 +227,11 @@ async function tryCreateRoom(): Promise<void> {
 	const client = await createSurrealClient();
 
 	await client.signin({ access: USER_ACCESS, variables: user });
-	await client.query(createRoomQuery);
+	try {
+		await client.query(createRoomQuery);
+	} catch (e) {
+		// 💡 creating a room can fail beause of randomness
+	}
 	await client.close();
 }
 
@@ -245,9 +249,13 @@ async function tryJoinRoom(): Promise<void> {
 	const client = await createSurrealClient();
 
 	await client.signin({ access: USER_ACCESS, variables: user });
-	await client.query(joinRoomQuery, {
-		room_id: room.id,
-	});
+	try {
+		await client.query(joinRoomQuery, {
+			room_id: room.id,
+		});
+	} catch (e) {
+		// 💡 joining room can fail beause of randomness
+	}
 	await client.close();
 }
 
@@ -289,10 +297,14 @@ async function trySendMessage(): Promise<void> {
 	const client = await createSurrealClient();
 
 	await client.signin({ access: USER_ACCESS, variables: user });
-	await client.query(sendMessageQuery, {
-		room_id: room.id,
-		content: faker.lorem.sentence(),
-	});
+	try {
+		await client.query(sendMessageQuery, {
+			room_id: room.id,
+			content: faker.lorem.sentence(),
+		});
+	} catch (e) {
+		// 💡 send a message can fail beause of randomness
+	}
 	await client.close();
 }
 
@@ -348,5 +360,3 @@ FOR $user IN $users {
 		console.error(e);
 	}
 }
-
-//export {};
