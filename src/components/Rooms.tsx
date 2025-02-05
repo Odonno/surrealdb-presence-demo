@@ -41,7 +41,7 @@ const Rooms = () => {
 				</h3>
 
 				{yourRooms.length > 0 ? (
-					<ul className="mt-6 flex flex-row gap-2">
+					<ul className="mt-6 flex flex-row flex-wrap gap-2">
 						{yourRooms.map((room) => {
 							return (
 								<li key={room.id}>
@@ -69,7 +69,7 @@ const Rooms = () => {
 					All rooms
 				</h3>
 
-				<ul className="mt-6 flex flex-row gap-2">
+				<ul className="mt-6 flex flex-row flex-wrap gap-2">
 					{otherRooms.map((room) => {
 						return (
 							<li key={room.id}>
